@@ -1,65 +1,51 @@
+import { useMemo, useRef, useLayoutEffect, useState } from "react";
 import { EcoProblemCard } from "./components/EcoProblemCard";
 import { StatCard } from "./components/StatCard";
 import { Header } from "./components/Header";
 import { Button } from "./components/ui/button";
+import ecoProblemsData from "./data/EcoProblems.json";
 import { AlertCircle, ArrowRight, Globe, Leaf } from "lucide-react";
 
-const ecologicalProblems = [
-  {
-    title: "Climate Change & Global Warming",
-    description: "Rising global temperatures are causing extreme weather events, melting ice caps, and threatening ecosystems worldwide. The effects are accelerating beyond predicted models.",
-    imageUrl: "https://images.unsplash.com/photo-1739968035881-231297cbb5ec?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjbGltYXRlJTIwY3Jpc2lzJTIwZWFydGh8ZW58MXx8fHwxNzYyMjgzNTcxfDA&ixlib=rb-4.1.0&q=80&w=1080",
-    urgencyLevel: 98,
-    impactedPopulation: "7.8 Billion",
-    timeframe: "Next 10 Years",
-    tags: ["Global", "Urgent", "Accelerating"]
-  },
-  {
-    title: "Deforestation",
-    description: "Massive loss of forest cover continues globally, destroying habitats, reducing carbon absorption, and threatening indigenous communities and biodiversity.",
-    imageUrl: "https://images.unsplash.com/photo-1686005232738-3dd6c18b4ada?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxkZWZvcmVzdGF0aW9uJTIwYWVyaWFsfGVufDF8fHx8MTc2MjI4MzU3MXww&ixlib=rb-4.1.0&q=80&w=1080",
-    urgencyLevel: 92,
-    impactedPopulation: "1.6 Billion",
-    timeframe: "Next 15 Years",
-    tags: ["Biodiversity", "Carbon", "Critical"]
-  },
-  {
-    title: "Ocean Pollution & Plastic Crisis",
-    description: "Over 8 million tons of plastic enter our oceans annually, creating massive garbage patches and threatening marine life. Microplastics now contaminate the entire food chain.",
-    imageUrl: "https://images.unsplash.com/photo-1641040680288-89b2cb3af26f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxvY2VhbiUyMHBvbGx1dGlvbiUyMHBsYXN0aWN8ZW58MXx8fHwxNzYyMjc2MjkxfDA&ixlib=rb-4.1.0&q=80&w=1080",
-    urgencyLevel: 88,
-    impactedPopulation: "3 Billion",
-    timeframe: "Next 20 Years",
-    tags: ["Marine Life", "Pollution", "Health"]
-  },
-  {
-    title: "Air Pollution",
-    description: "Toxic air quality affects billions globally, causing respiratory diseases, premature deaths, and contributing to climate change. Urban areas face severe smog and particulate matter.",
-    imageUrl: "https://images.unsplash.com/photo-1674753736774-a52048de6fab?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhaXIlMjBwb2xsdXRpb24lMjBjaXR5fGVufDF8fHx8MTc2MjI4MzU3Mnww&ixlib=rb-4.1.0&q=80&w=1080",
-    urgencyLevel: 85,
-    impactedPopulation: "4.2 Billion",
-    timeframe: "Ongoing",
-    tags: ["Health", "Urban", "Respiratory"]
-  },
-  {
-    title: "Biodiversity Loss & Species Extinction",
-    description: "Over 1 million species face extinction due to habitat loss, climate change, and human activity. We're experiencing the sixth mass extinction event in Earth's history.",
-    imageUrl: "https://images.unsplash.com/photo-1672586658825-e653341241fc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxlbmRhbmdlcmVkJTIwd2lsZGxpZmV8ZW58MXx8fHwxNzYyMjYwMDg4fDA&ixlib=rb-4.1.0&q=80&w=1080",
-    urgencyLevel: 90,
-    impactedPopulation: "Global Impact",
-    timeframe: "Next 50 Years",
-    tags: ["Extinction", "Habitat Loss", "Critical"]
-  },
-  {
-    title: "Water Scarcity & Drought",
-    description: "Fresh water supplies are depleting rapidly due to overuse, pollution, and climate change. Billions face water stress, affecting agriculture, health, and economic stability.",
-    imageUrl: "https://images.unsplash.com/photo-1693563920446-3e77e164827c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx3YXRlciUyMHNjYXJjaXR5JTIwZHJvdWdodHxlbnwxfHx8fDE3NjIyODM1NzJ8MA&ixlib=rb-4.1.0&q=80&w=1080",
-    urgencyLevel: 87,
-    impactedPopulation: "2.2 Billion",
-    timeframe: "Next 25 Years",
-    tags: ["Water", "Agriculture", "Scarcity"]
-  }
-];
+const selectableRegions = [
+  "Asia",
+  "Europe",
+  "North America",
+  "South America",
+  "Africa",
+  "Antarctica",
+  "Oceania",
+  "GLOBAL"
+] as const;
+
+type RegionOption = (typeof selectableRegions)[number];
+type Continent = Exclude<RegionOption, "GLOBAL">;
+
+type RawEcoProblem = {
+  id: string;
+  continent: Continent;
+  title: string;
+  description: string;
+  urgency_percent: number;
+  affected_population: number;
+  critical_timeframe: string;
+  tags: string[];
+  image_url?: string;
+  last_updated: string;
+};
+
+const rawEcoProblems = ecoProblemsData as RawEcoProblem[];
+
+const continentImageMap: Record<Continent, string> = {
+  Asia: "https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=1080&q=80",
+  Europe: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1080&q=80",
+  "North America": "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=1080&q=80",
+  "South America": "https://images.unsplash.com/photo-1482192505345-5655af888cc4?auto=format&fit=crop&w=1080&q=80",
+  Africa: "https://images.unsplash.com/photo-1491897554428-130a60dd4757?auto=format&fit=crop&w=1080&q=80",
+  Antarctica: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1080&q=80",
+  Oceania: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1080&q=80"
+};
+
+const defaultRegionImage = "https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=1080&q=80";
 
 const stats = [
   { value: "1.5°C", label: "Global Temperature Rise Since 1850", trend: "+0.2°C/decade" },
@@ -68,7 +54,40 @@ const stats = [
   { value: "7M", label: "Annual Deaths from Air Pollution", trend: "Rising" }
 ];
 
+const formatPopulation = (value: number) => {
+  if (value >= 1_000_000_000) {
+    return `${(value / 1_000_000_000).toFixed(1).replace(/\.0$/, "")}B`;
+  }
+  if (value >= 1_000_000) {
+    return `${(value / 1_000_000).toFixed(1).replace(/\.0$/, "")}M`;
+  }
+  if (value >= 1_000) {
+    return `${(value / 1_000).toFixed(1).replace(/\.0$/, "")}K`;
+  }
+  return value.toString();
+};
+
 export default function App() {
+  const [selectedRegion, setSelectedRegion] = useState<RegionOption>("GLOBAL");
+
+  const filteredProblems = useMemo(() => {
+    const relevantProblems =
+      selectedRegion === "GLOBAL"
+        ? rawEcoProblems
+        : rawEcoProblems.filter((problem) => problem.continent === selectedRegion);
+
+    return relevantProblems.map((problem) => ({
+      id: problem.id,
+      title: problem.title,
+      description: problem.description,
+      urgencyLevel: problem.urgency_percent,
+      impactedPopulation: formatPopulation(problem.affected_population),
+      timeframe: problem.critical_timeframe,
+      tags: problem.tags,
+      imageUrl: problem.image_url || continentImageMap[problem.continent] || defaultRegionImage
+    }));
+  }, [selectedRegion]);
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-emerald-50 to-white">
       {/* Navigation Header */}
@@ -92,11 +111,11 @@ export default function App() {
             </p>
             <div className="flex flex-wrap gap-4">
               <Button size="lg" className="bg-white text-emerald-900 hover:bg-emerald-50">
-                Learn More
+                Save Planet
                 <ArrowRight className="ml-2 w-4 h-4" />
               </Button>
               <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/10">
-                Take Action
+                Take Action!
               </Button>
             </div>
           </div>
@@ -118,7 +137,52 @@ export default function App() {
         <div className="text-center mb-12">
           <div className="flex items-center justify-center gap-2 mb-4">
             <Globe className="w-6 h-6 text-emerald-600" />
-            <span className="text-emerald-600 uppercase tracking-wider">Global Challenges</span>
+            {(() => {
+              const MeasureableSelect = () => {
+                const measureRef = useRef<HTMLSpanElement | null>(null);
+                const [selectWidth, setSelectWidth] = useState<number>();
+
+                useLayoutEffect(() => {
+                  if (measureRef.current) {
+                    const rect = measureRef.current.getBoundingClientRect();
+                    // Add room for the caret/check icon and borders
+                    setSelectWidth(rect.width + 28);
+                  }
+                }, [selectedRegion]);
+
+                return (
+                  <div
+                    className="relative inline-block align-middle group"
+                    style={selectWidth ? { width: `${selectWidth}px` } : undefined}
+                  >
+                    {/* Invisible measurement span to size select to content */}
+                    <span
+                      ref={measureRef}
+                      className="invisible absolute -z-10 whitespace-nowrap uppercase tracking-wider text-base font-semibold px-3 py-1"
+                    >
+                      {selectedRegion}
+                    </span>
+
+                    <select
+                      aria-label="Select region"
+                      className="appearance-none w-full bg-transparent border border-transparent text-emerald-700 uppercase tracking-wider text-base font-semibold px-3 py-1 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300 hover:bg-white hover:border-emerald-200 transition-colors"
+                      value={selectedRegion}
+                      onChange={(event) => setSelectedRegion(event.target.value as RegionOption)}
+                    >
+                      {selectableRegions.map((region) => (
+                        <option key={region} value={region} className="text-emerald-900">
+                          {region}
+                        </option>
+                      ))}
+                    </select>
+
+                    {/* Intentionally no dropdown icon per request */}
+                  </div>
+                );
+              };
+
+              return <MeasureableSelect />;
+            })()}
           </div>
           <h2 className="mb-4">
             Priority Environmental Issues
@@ -131,8 +195,8 @@ export default function App() {
 
         {/* Problems Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
-          {ecologicalProblems.map((problem, index) => (
-            <EcoProblemCard key={index} {...problem} />
+          {filteredProblems.map((problem) => (
+            <EcoProblemCard key={problem.id} {...problem} />
           ))}
         </div>
 
