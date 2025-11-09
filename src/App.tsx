@@ -1,5 +1,6 @@
 import { EcoProblemCard } from "./components/EcoProblemCard";
 import { StatCard } from "./components/StatCard";
+import { Header } from "./components/Header";
 import { Button } from "./components/ui/button";
 import { AlertCircle, ArrowRight, Globe, Leaf } from "lucide-react";
 
@@ -70,6 +71,9 @@ const stats = [
 export default function App() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-emerald-50 to-white">
+      {/* Navigation Header */}
+      <Header />
+      
       {/* Hero Section */}
       <header className="relative bg-gradient-to-r from-emerald-900 to-teal-800 text-white overflow-hidden">
         <div className="absolute inset-0 bg-black/30"></div>
