@@ -1,0 +1,410 @@
+[
+  {
+    "id": "af-1-local-1762733006043",
+    "problem_id": "af-1",
+    "author": "Community Member",
+    "time_posted": "2025-11-10T00:03:26.043Z",
+    "content": "1232313",
+    "votes": 1
+  },
+  {
+    "id": "af-1-local-1762732701410",
+    "problem_id": "af-1",
+    "author": "Community Member",
+    "time_posted": "2025-11-09T23:58:21.410Z",
+    "content": "xzcz",
+    "votes": 1
+  },
+  {
+    "id": "af-1-local-1762732669709",
+    "problem_id": "af-1",
+    "author": "Community Member",
+    "time_posted": "2025-11-09T23:57:49.709Z",
+    "content": "1234tests",
+    "votes": 1
+  },
+  {
+    "id": "af-1-sol-1",
+    "problem_id": "af-1",
+    "author": "GreenTech Alliance",
+    "time_posted": "2025-02-10T22:00:00.000Z",
+    "content": "GreenTech Alliance focused on \"Water stress and droughts\" in Africa and partnered with municipal leaders to set measurable targets and deployed open dashboards to track progress You can help by sharing monitoring data or offering storytelling support.",
+    "votes": 123
+  },
+  {
+    "id": "af-1-sol-2",
+    "problem_id": "af-1",
+    "author": "Urban Climate Lab",
+    "time_posted": "2025-03-11T22:00:00.000Z",
+    "content": "Urban Climate Lab focused on \"Water stress and droughts\" in Africa and secured blended finance so cooperatives can purchase equipment without waiting for central government budgets They need more remote sensing capacity and grassroots funding partners.",
+    "votes": 126
+  },
+  {
+    "id": "af-2-sol-1",
+    "problem_id": "af-2",
+    "author": "Urban Climate Lab",
+    "time_posted": "2025-03-10T22:00:00.000Z",
+    "content": "Urban Climate Lab focused on \"Desertification\" in Africa and secured blended finance so cooperatives can purchase equipment without waiting for central government budgets They need more remote sensing capacity and grassroots funding partners.",
+    "votes": 121
+  },
+  {
+    "id": "af-2-sol-2",
+    "problem_id": "af-2",
+    "author": "Blue Planet Volunteers",
+    "time_posted": "2025-04-11T21:00:00.000Z",
+    "content": "Blue Planet Volunteers focused on \"Desertification\" in Africa and built a regional coalition that shares procurement contracts, cutting costs by almost 20% Engineers, communicators, and civic technologists can plug in immediately.",
+    "votes": 124
+  },
+  {
+    "id": "af-3-sol-1",
+    "problem_id": "af-3",
+    "author": "Blue Planet Volunteers",
+    "time_posted": "2025-04-10T21:00:00.000Z",
+    "content": "Blue Planet Volunteers focused on \"Water supply and sanitation\" in Africa and built a regional coalition that shares procurement contracts, cutting costs by almost 20% Engineers, communicators, and civic technologists can plug in immediately.",
+    "votes": 119
+  },
+  {
+    "id": "af-3-sol-2",
+    "problem_id": "af-3",
+    "author": "Forest Guardians Network",
+    "time_posted": "2025-05-11T21:00:00.000Z",
+    "content": "Forest Guardians Network focused on \"Water supply and sanitation\" in Africa and documented indigenous knowledge and merged it with satellite monitoring to prioritize hotspots The team welcomes introductions to municipal utilities and cooperatives.",
+    "votes": 122
+  },
+  {
+    "id": "af-4-sol-1",
+    "problem_id": "af-4",
+    "author": "Forest Guardians Network",
+    "time_posted": "2025-05-10T21:00:00.000Z",
+    "content": "Forest Guardians Network focused on \"Biodiversity loss\" in Africa and documented indigenous knowledge and merged it with satellite monitoring to prioritize hotspots The team welcomes introductions to municipal utilities and cooperatives.",
+    "votes": 117
+  },
+  {
+    "id": "af-4-sol-2",
+    "problem_id": "af-4",
+    "author": "Delta Resilience Hub",
+    "time_posted": "2025-06-11T21:00:00.000Z",
+    "content": "Delta Resilience Hub focused on \"Biodiversity loss\" in Africa and runs youth fellowships so every cohort prototypes two or three tangible solutions for their city Researchers can contribute scenario modeling tools and policy briefs.",
+    "votes": 120
+  },
+  {
+    "id": "as-1-sol-1",
+    "problem_id": "as-1",
+    "author": "Delta Resilience Hub",
+    "time_posted": "2025-06-10T21:00:00.000Z",
+    "content": "Delta Resilience Hub focused on \"PM2.5 and smog\" in Asia and runs youth fellowships so every cohort prototypes two or three tangible solutions for their city Researchers can contribute scenario modeling tools and policy briefs.",
+    "votes": 115
+  },
+  {
+    "id": "as-1-sol-2",
+    "problem_id": "as-1",
+    "author": "Clean Air Fellows",
+    "time_posted": "2025-07-11T21:00:00.000Z",
+    "content": "Clean Air Fellows focused on \"PM2.5 and smog\" in Asia and operates a rapid-response team that can be deployed within 72 hours after climate shocks Mentors with experience in scaling cooperatives are especially valuable.",
+    "votes": 118
+  },
+  {
+    "id": "as-2-sol-1",
+    "problem_id": "as-2",
+    "author": "Clean Air Fellows",
+    "time_posted": "2025-07-10T21:00:00.000Z",
+    "content": "Clean Air Fellows focused on \"Monsoon floods and typhoons\" in Asia and operates a rapid-response team that can be deployed within 72 hours after climate shocks Mentors with experience in scaling cooperatives are especially valuable.",
+    "votes": 113
+  },
+  {
+    "id": "as-2-sol-2",
+    "problem_id": "as-2",
+    "author": "Indigenous Climate Council",
+    "time_posted": "2025-08-11T21:00:00.000Z",
+    "content": "Indigenous Climate Council focused on \"Monsoon floods and typhoons\" in Asia and coaches mayors on climate budgeting and brings private investors into resilience projects They are recruiting regional coordinators fluent in local languages.",
+    "votes": 116
+  },
+  {
+    "id": "as-3-sol-1",
+    "problem_id": "as-3",
+    "author": "Indigenous Climate Council",
+    "time_posted": "2025-08-10T21:00:00.000Z",
+    "content": "Indigenous Climate Council focused on \"Extreme heat\" in Asia and coaches mayors on climate budgeting and brings private investors into resilience projects They are recruiting regional coordinators fluent in local languages.",
+    "votes": 111
+  },
+  {
+    "id": "as-3-sol-2",
+    "problem_id": "as-3",
+    "author": "Renewables Taskforce",
+    "time_posted": "2025-09-11T21:00:00.000Z",
+    "content": "Renewables Taskforce focused on \"Extreme heat\" in Asia and uses open-source playbooks so other regions can duplicate the same approach in under six weeks Analytics volunteers can help them open-source the impact metrics.",
+    "votes": 114
+  },
+  {
+    "id": "as-4-sol-1",
+    "problem_id": "as-4",
+    "author": "Renewables Taskforce",
+    "time_posted": "2025-09-10T21:00:00.000Z",
+    "content": "Renewables Taskforce focused on \"Sea-level rise in megadeltas\" in Asia and uses open-source playbooks so other regions can duplicate the same approach in under six weeks Analytics volunteers can help them open-source the impact metrics.",
+    "votes": 109
+  },
+  {
+    "id": "as-4-sol-2",
+    "problem_id": "as-4",
+    "author": "Biodiversity Stewards",
+    "time_posted": "2025-10-11T21:00:00.000Z",
+    "content": "Biodiversity Stewards focused on \"Sea-level rise in megadeltas\" in Asia and hosts quarterly peer reviews to keep the work accountable and transparent Support them by translating toolkits and amplifying success stories.",
+    "votes": 112
+  },
+  {
+    "id": "eu-1-sol-1",
+    "problem_id": "eu-1",
+    "author": "Biodiversity Stewards",
+    "time_posted": "2025-10-10T21:00:00.000Z",
+    "content": "Biodiversity Stewards focused on \"Extreme heat and health\" in Europe and hosts quarterly peer reviews to keep the work accountable and transparent Support them by translating toolkits and amplifying success stories.",
+    "votes": 107
+  },
+  {
+    "id": "eu-1-sol-2",
+    "problem_id": "eu-1",
+    "author": "Sahel Water Collective",
+    "time_posted": "2025-11-11T22:00:00.000Z",
+    "content": "Sahel Water Collective focused on \"Extreme heat and health\" in Europe and launched a pilot that combines community microgrids with local training, proving the model can be scaled within three years They are looking for data donations and pro-bono legal advice.",
+    "votes": 110
+  },
+  {
+    "id": "eu-2-sol-1",
+    "problem_id": "eu-2",
+    "author": "Sahel Water Collective",
+    "time_posted": "2025-11-10T22:00:00.000Z",
+    "content": "Sahel Water Collective focused on \"Droughts and low river flows\" in Europe and launched a pilot that combines community microgrids with local training, proving the model can be scaled within three years They are looking for data donations and pro-bono legal advice.",
+    "votes": 105
+  },
+  {
+    "id": "eu-2-sol-2",
+    "problem_id": "eu-2",
+    "author": "GreenTech Alliance",
+    "time_posted": "2025-12-11T22:00:00.000Z",
+    "content": "GreenTech Alliance focused on \"Droughts and low river flows\" in Europe and partnered with municipal leaders to set measurable targets and deployed open dashboards to track progress You can help by sharing monitoring data or offering storytelling support.",
+    "votes": 108
+  },
+  {
+    "id": "eu-3-sol-1",
+    "problem_id": "eu-3",
+    "author": "GreenTech Alliance",
+    "time_posted": "2025-12-10T22:00:00.000Z",
+    "content": "GreenTech Alliance focused on \"Flash floods and cloudbursts\" in Europe and partnered with municipal leaders to set measurable targets and deployed open dashboards to track progress You can help by sharing monitoring data or offering storytelling support.",
+    "votes": 103
+  },
+  {
+    "id": "eu-3-sol-2",
+    "problem_id": "eu-3",
+    "author": "Urban Climate Lab",
+    "time_posted": "2025-01-11T22:00:00.000Z",
+    "content": "Urban Climate Lab focused on \"Flash floods and cloudbursts\" in Europe and secured blended finance so cooperatives can purchase equipment without waiting for central government budgets They need more remote sensing capacity and grassroots funding partners.",
+    "votes": 106
+  },
+  {
+    "id": "eu-4-sol-1",
+    "problem_id": "eu-4",
+    "author": "Urban Climate Lab",
+    "time_posted": "2025-01-10T22:00:00.000Z",
+    "content": "Urban Climate Lab focused on \"Mediterranean wildfires\" in Europe and secured blended finance so cooperatives can purchase equipment without waiting for central government budgets They need more remote sensing capacity and grassroots funding partners.",
+    "votes": 101
+  },
+  {
+    "id": "eu-4-sol-2",
+    "problem_id": "eu-4",
+    "author": "Blue Planet Volunteers",
+    "time_posted": "2025-02-11T22:00:00.000Z",
+    "content": "Blue Planet Volunteers focused on \"Mediterranean wildfires\" in Europe and built a regional coalition that shares procurement contracts, cutting costs by almost 20% Engineers, communicators, and civic technologists can plug in immediately.",
+    "votes": 104
+  },
+  {
+    "id": "na-1-sol-1",
+    "problem_id": "na-1",
+    "author": "Blue Planet Volunteers",
+    "time_posted": "2025-02-10T22:00:00.000Z",
+    "content": "Blue Planet Volunteers focused on \"Wildfires and smoke\" in North America and built a regional coalition that shares procurement contracts, cutting costs by almost 20% Engineers, communicators, and civic technologists can plug in immediately.",
+    "votes": 99
+  },
+  {
+    "id": "na-1-sol-2",
+    "problem_id": "na-1",
+    "author": "Forest Guardians Network",
+    "time_posted": "2025-03-11T22:00:00.000Z",
+    "content": "Forest Guardians Network focused on \"Wildfires and smoke\" in North America and documented indigenous knowledge and merged it with satellite monitoring to prioritize hotspots The team welcomes introductions to municipal utilities and cooperatives.",
+    "votes": 102
+  },
+  {
+    "id": "na-2-sol-1",
+    "problem_id": "na-2",
+    "author": "Forest Guardians Network",
+    "time_posted": "2025-03-10T22:00:00.000Z",
+    "content": "Forest Guardians Network focused on \"Hurricanes and coastal flooding\" in North America and documented indigenous knowledge and merged it with satellite monitoring to prioritize hotspots The team welcomes introductions to municipal utilities and cooperatives.",
+    "votes": 97
+  },
+  {
+    "id": "na-2-sol-2",
+    "problem_id": "na-2",
+    "author": "Delta Resilience Hub",
+    "time_posted": "2025-04-11T21:00:00.000Z",
+    "content": "Delta Resilience Hub focused on \"Hurricanes and coastal flooding\" in North America and runs youth fellowships so every cohort prototypes two or three tangible solutions for their city Researchers can contribute scenario modeling tools and policy briefs.",
+    "votes": 100
+  },
+  {
+    "id": "na-3-sol-1",
+    "problem_id": "na-3",
+    "author": "Delta Resilience Hub",
+    "time_posted": "2025-04-10T21:00:00.000Z",
+    "content": "Delta Resilience Hub focused on \"Extreme heat and heat domes\" in North America and runs youth fellowships so every cohort prototypes two or three tangible solutions for their city Researchers can contribute scenario modeling tools and policy briefs.",
+    "votes": 95
+  },
+  {
+    "id": "na-3-sol-2",
+    "problem_id": "na-3",
+    "author": "Clean Air Fellows",
+    "time_posted": "2025-05-11T21:00:00.000Z",
+    "content": "Clean Air Fellows focused on \"Extreme heat and heat domes\" in North America and operates a rapid-response team that can be deployed within 72 hours after climate shocks Mentors with experience in scaling cooperatives are especially valuable.",
+    "votes": 98
+  },
+  {
+    "id": "na-4-sol-1",
+    "problem_id": "na-4",
+    "author": "Clean Air Fellows",
+    "time_posted": "2025-05-10T21:00:00.000Z",
+    "content": "Clean Air Fellows focused on \"Colorado River basin drought\" in North America and operates a rapid-response team that can be deployed within 72 hours after climate shocks Mentors with experience in scaling cooperatives are especially valuable.",
+    "votes": 93
+  },
+  {
+    "id": "na-4-sol-2",
+    "problem_id": "na-4",
+    "author": "Indigenous Climate Council",
+    "time_posted": "2025-06-11T21:00:00.000Z",
+    "content": "Indigenous Climate Council focused on \"Colorado River basin drought\" in North America and coaches mayors on climate budgeting and brings private investors into resilience projects They are recruiting regional coordinators fluent in local languages.",
+    "votes": 96
+  },
+  {
+    "id": "sa-1-sol-1",
+    "problem_id": "sa-1",
+    "author": "Indigenous Climate Council",
+    "time_posted": "2025-06-10T21:00:00.000Z",
+    "content": "Indigenous Climate Council focused on \"Amazon deforestation\" in South America and coaches mayors on climate budgeting and brings private investors into resilience projects They are recruiting regional coordinators fluent in local languages.",
+    "votes": 91
+  },
+  {
+    "id": "sa-1-sol-2",
+    "problem_id": "sa-1",
+    "author": "Renewables Taskforce",
+    "time_posted": "2025-07-11T21:00:00.000Z",
+    "content": "Renewables Taskforce focused on \"Amazon deforestation\" in South America and uses open-source playbooks so other regions can duplicate the same approach in under six weeks Analytics volunteers can help them open-source the impact metrics.",
+    "votes": 94
+  },
+  {
+    "id": "sa-2-sol-1",
+    "problem_id": "sa-2",
+    "author": "Renewables Taskforce",
+    "time_posted": "2025-07-10T21:00:00.000Z",
+    "content": "Renewables Taskforce focused on \"Droughts and water crises\" in South America and uses open-source playbooks so other regions can duplicate the same approach in under six weeks Analytics volunteers can help them open-source the impact metrics.",
+    "votes": 89
+  },
+  {
+    "id": "sa-2-sol-2",
+    "problem_id": "sa-2",
+    "author": "Biodiversity Stewards",
+    "time_posted": "2025-08-11T21:00:00.000Z",
+    "content": "Biodiversity Stewards focused on \"Droughts and water crises\" in South America and hosts quarterly peer reviews to keep the work accountable and transparent Support them by translating toolkits and amplifying success stories.",
+    "votes": 92
+  },
+  {
+    "id": "sa-3-sol-1",
+    "problem_id": "sa-3",
+    "author": "Biodiversity Stewards",
+    "time_posted": "2025-08-10T21:00:00.000Z",
+    "content": "Biodiversity Stewards focused on \"Floods and landslides\" in South America and hosts quarterly peer reviews to keep the work accountable and transparent Support them by translating toolkits and amplifying success stories.",
+    "votes": 87
+  },
+  {
+    "id": "sa-3-sol-2",
+    "problem_id": "sa-3",
+    "author": "Sahel Water Collective",
+    "time_posted": "2025-09-11T21:00:00.000Z",
+    "content": "Sahel Water Collective focused on \"Floods and landslides\" in South America and launched a pilot that combines community microgrids with local training, proving the model can be scaled within three years They are looking for data donations and pro-bono legal advice.",
+    "votes": 90
+  },
+  {
+    "id": "sa-4-sol-1",
+    "problem_id": "sa-4",
+    "author": "Sahel Water Collective",
+    "time_posted": "2025-09-10T21:00:00.000Z",
+    "content": "Sahel Water Collective focused on \"Fires in the Amazon and Cerrado\" in South America and launched a pilot that combines community microgrids with local training, proving the model can be scaled within three years They are looking for data donations and pro-bono legal advice.",
+    "votes": 85
+  },
+  {
+    "id": "sa-4-sol-2",
+    "problem_id": "sa-4",
+    "author": "GreenTech Alliance",
+    "time_posted": "2025-10-11T21:00:00.000Z",
+    "content": "GreenTech Alliance focused on \"Fires in the Amazon and Cerrado\" in South America and partnered with municipal leaders to set measurable targets and deployed open dashboards to track progress You can help by sharing monitoring data or offering storytelling support.",
+    "votes": 88
+  },
+  {
+    "id": "oc-1-sol-1",
+    "problem_id": "oc-1",
+    "author": "GreenTech Alliance",
+    "time_posted": "2025-10-10T21:00:00.000Z",
+    "content": "GreenTech Alliance focused on \"Sea-level rise on small islands\" in Oceania and partnered with municipal leaders to set measurable targets and deployed open dashboards to track progress You can help by sharing monitoring data or offering storytelling support.",
+    "votes": 83
+  },
+  {
+    "id": "oc-1-sol-2",
+    "problem_id": "oc-1",
+    "author": "Urban Climate Lab",
+    "time_posted": "2025-11-11T22:00:00.000Z",
+    "content": "Urban Climate Lab focused on \"Sea-level rise on small islands\" in Oceania and secured blended finance so cooperatives can purchase equipment without waiting for central government budgets They need more remote sensing capacity and grassroots funding partners.",
+    "votes": 86
+  },
+  {
+    "id": "oc-2-sol-1",
+    "problem_id": "oc-2",
+    "author": "Urban Climate Lab",
+    "time_posted": "2025-11-10T22:00:00.000Z",
+    "content": "Urban Climate Lab focused on \"Cyclones and storm surges\" in Oceania and secured blended finance so cooperatives can purchase equipment without waiting for central government budgets They need more remote sensing capacity and grassroots funding partners.",
+    "votes": 81
+  },
+  {
+    "id": "oc-2-sol-2",
+    "problem_id": "oc-2",
+    "author": "Blue Planet Volunteers",
+    "time_posted": "2025-12-11T22:00:00.000Z",
+    "content": "Blue Planet Volunteers focused on \"Cyclones and storm surges\" in Oceania and built a regional coalition that shares procurement contracts, cutting costs by almost 20% Engineers, communicators, and civic technologists can plug in immediately.",
+    "votes": 84
+  },
+  {
+    "id": "oc-3-sol-1",
+    "problem_id": "oc-3",
+    "author": "Blue Planet Volunteers",
+    "time_posted": "2025-12-10T22:00:00.000Z",
+    "content": "Blue Planet Volunteers focused on \"Coral bleaching\" in Oceania and built a regional coalition that shares procurement contracts, cutting costs by almost 20% Engineers, communicators, and civic technologists can plug in immediately.",
+    "votes": 79
+  },
+  {
+    "id": "oc-3-sol-2",
+    "problem_id": "oc-3",
+    "author": "Forest Guardians Network",
+    "time_posted": "2025-01-11T22:00:00.000Z",
+    "content": "Forest Guardians Network focused on \"Coral bleaching\" in Oceania and documented indigenous knowledge and merged it with satellite monitoring to prioritize hotspots The team welcomes introductions to municipal utilities and cooperatives.",
+    "votes": 82
+  },
+  {
+    "id": "oc-4-sol-1",
+    "problem_id": "oc-4",
+    "author": "Forest Guardians Network",
+    "time_posted": "2025-01-10T22:00:00.000Z",
+    "content": "Forest Guardians Network focused on \"Wildfires and smoke\" in Oceania and documented indigenous knowledge and merged it with satellite monitoring to prioritize hotspots The team welcomes introductions to municipal utilities and cooperatives.",
+    "votes": 77
+  },
+  {
+    "id": "oc-4-sol-2",
+    "problem_id": "oc-4",
+    "author": "Delta Resilience Hub",
+    "time_posted": "2025-02-11T22:00:00.000Z",
+    "content": "Delta Resilience Hub focused on \"Wildfires and smoke\" in Oceania and runs youth fellowships so every cohort prototypes two or three tangible solutions for their city Researchers can contribute scenario modeling tools and policy briefs.",
+    "votes": 80
+  }
+]
