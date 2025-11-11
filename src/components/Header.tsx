@@ -2,7 +2,11 @@ import { useState } from "react";
 import { Button } from "./ui/button";
 import { Globe, Menu, X, Leaf, TrendingUp, Users, BookOpen } from "lucide-react";
 
-export function Header() {
+interface HeaderProps {
+  onNavigateToResources?: () => void;
+}
+
+export function Header({ onNavigateToResources }: HeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navLinks = [
@@ -36,6 +40,12 @@ export function Header() {
                   key={link.name}
                   href={link.href}
                   className="flex items-center gap-2 text-gray-700 hover:text-emerald-600 transition-colors group"
+                  onClick={(event) => {
+                    if (link.href === "#resources" && onNavigateToResources) {
+                      event.preventDefault();
+                      onNavigateToResources();
+                    }
+                  }}
                 >
                   <Icon className="w-4 h-4 group-hover:scale-110 transition-transform" />
                   <span>{link.name}</span>
@@ -76,7 +86,13 @@ export function Header() {
                     key={link.name}
                     href={link.href}
                     className="flex items-center gap-3 text-gray-700 hover:text-emerald-600 transition-colors py-2"
-                    onClick={() => setMobileMenuOpen(false)}
+                    onClick={(event) => {
+                      if (link.href === "#resources" && onNavigateToResources) {
+                        event.preventDefault();
+                        onNavigateToResources();
+                      }
+                      setMobileMenuOpen(false);
+                    }}
                   >
                     <Icon className="w-5 h-5" />
                     <span>{link.name}</span>

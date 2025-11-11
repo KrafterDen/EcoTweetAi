@@ -82,7 +82,7 @@ export function EcoProblemCard({
           onClick={onTakeAction}
           className="w-full mt-4 bg-emerald-600 hover:bg-emerald-700 text-white"
         >
-          Take Action
+          Take Action!
           <ArrowRight className="ml-2 w-4 h-4" />
         </Button>
       </div>

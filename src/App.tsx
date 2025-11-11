@@ -5,9 +5,10 @@ import { ProblemSolutionPage } from "./components/ProblemSolutionPage";
 import { RegionSelector } from "./components/RegionSelector";
 import { TutorialTooltip } from "./components/TutorialTooltip";
 import { Button } from "./components/ui/button";
-import { AlertCircle, ArrowRight, Globe, Leaf } from "lucide-react";
+import { AlertCircle, ArrowLeft, ArrowRight, Globe, Leaf } from "lucide-react";
 import { useState, useRef, useEffect, useMemo } from "react";
 import ecoProblemsData from "./data/EcoProblems.json";
+import { ActivistResources } from "./components/ActivistResources";
 
 type RegionValue =
   | "GLOBAL"
@@ -88,11 +89,21 @@ const stats = [
   { value: "7M", label: "Annual Deaths from Air Pollution", trend: "Rising" }
 ];
 
+type AppView = "home" | "resources";
+
+const getInitialView = (): AppView => {
+  if (typeof window !== "undefined" && window.location.hash === "#resources") {
+    return "resources";
+  }
+  return "home";
+};
+
 export default function App() {
   const [selectedProblem, setSelectedProblem] = useState<EcoProblem | null>(null);
   const [selectedRegion, setSelectedRegion] = useState<RegionValue>("GLOBAL");
   const [tutorialStep, setTutorialStep] = useState<number>(0);
   const [highlightTakeAction, setHighlightTakeAction] = useState(false);
+  const [view, setView] = useState<AppView>(() => getInitialView());
   
   const regionSelectorRef = useRef<HTMLDivElement>(null);
   const problemsGridRef = useRef<HTMLDivElement>(null);
@@ -124,6 +135,35 @@ export default function App() {
     setTutorialStep(1);
   };
 
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+    const handleHashChange = () => {
+      setView(getInitialView());
+    };
+    window.addEventListener("hashchange", handleHashChange);
+    return () => {
+      window.removeEventListener("hashchange", handleHashChange);
+    };
+  }, []);
+
+  const navigateTo = (next: AppView) => {
+    setView(next);
+    if (typeof window !== "undefined") {
+      if (next === "resources") {
+        window.location.hash = "#resources";
+      } else {
+        window.history.replaceState(
+          null,
+          "",
+          window.location.pathname + window.location.search
+        );
+      }
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+
   const handleRegionChange = (value: string) => {
     setSelectedRegion(value as RegionValue);
     if (tutorialStep === 1) {
@@ -152,10 +192,44 @@ export default function App() {
     );
   }
 
+  if (view === "resources") {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-emerald-50 to-white">
+        <Header onNavigateToResources={() => navigateTo("resources")} />
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-10">
+            <div className="space-y-3">
+              <p className="text-sm uppercase tracking-[0.3em] text-emerald-600">
+                Movement Leaders
+              </p>
+              <h1 className="text-3xl md:text-4xl font-semibold text-emerald-950">
+                Global Environmental Activists
+              </h1>
+              <p className="text-gray-600 max-w-2xl">
+                Discover the scientists, organizers, diplomats, and storytellers
+                leading the fight for climate justice. Follow them on X to keep
+                their work amplified in your network.
+              </p>
+            </div>
+            <Button
+              variant="outline"
+              className="w-full sm:w-auto"
+              onClick={() => navigateTo("home")}
+            >
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back to main page
+            </Button>
+          </div>
+          <ActivistResources />
+        </main>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-emerald-50 to-white">
       {/* Navigation Header */}
-      <Header />
+      <Header onNavigateToResources={() => navigateTo("resources")} />
       
       {/* Hero Section */}
       <header className="relative bg-gradient-to-r from-emerald-900 to-teal-800 text-white overflow-hidden">
@@ -255,41 +329,6 @@ export default function App() {
           </div>
         </div>
       </main>
-
-      {/* Footer */}
-      <footer className="bg-gray-900 text-gray-400 py-12 mt-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-            <div>
-              <h3 className="text-white mb-4">About This Initiative</h3>
-              <p className="text-sm">
-                Raising awareness about critical ecological issues to inspire action and promote sustainable solutions for our planet's future.
-              </p>
-            </div>
-            <div>
-              <h3 className="text-white mb-4">Resources</h3>
-              <ul className="space-y-2 text-sm">
-                <li><a href="#" className="hover:text-white transition-colors">Climate Science Reports</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Conservation Organizations</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Sustainable Living Guide</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Policy & Advocacy</a></li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="text-white mb-4">Take Action</h3>
-              <ul className="space-y-2 text-sm">
-                <li><a href="#" className="hover:text-white transition-colors">Reduce Carbon Footprint</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Support Clean Energy</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Protect Biodiversity</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Join Local Initiatives</a></li>
-              </ul>
-            </div>
-          </div>
-          <div className="border-t border-gray-800 pt-8 text-center text-sm">
-            <p>&copy; 2025 Ecological Awareness Initiative. Updated November 2025.</p>
-          </div>
-        </div>
-      </footer>
 
       {/* Tutorial Tooltip */}
       {tutorialStep > 0 && (
