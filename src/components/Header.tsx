@@ -4,9 +4,10 @@ import { Menu, X, TrendingUp, Users, BookOpen, AlertTriangle } from "lucide-reac
 
 interface HeaderProps {
   onNavigateToResources?: () => void;
+  onNavigateToInvolved?: () => void;
 }
 
-export function Header({ onNavigateToResources }: HeaderProps) {
+export function Header({ onNavigateToResources, onNavigateToInvolved }: HeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navLinks = [
@@ -45,6 +46,10 @@ export function Header({ onNavigateToResources }: HeaderProps) {
                     if (link.href === "#resources" && onNavigateToResources) {
                       event.preventDefault();
                       onNavigateToResources();
+                    }
+                    if (link.href === "#involved" && onNavigateToInvolved) {
+                      event.preventDefault();
+                      onNavigateToInvolved();
                     }
                   }}
                 >
@@ -92,6 +97,10 @@ export function Header({ onNavigateToResources }: HeaderProps) {
                       if (link.href === "#resources" && onNavigateToResources) {
                         event.preventDefault();
                         onNavigateToResources();
+                      }
+                      if (link.href === "#involved" && onNavigateToInvolved) {
+                        event.preventDefault();
+                        onNavigateToInvolved();
                       }
                       setMobileMenuOpen(false);
                     }}

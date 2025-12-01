@@ -1,11 +1,13 @@
 import { EcoProblemCard } from "./components/EcoProblemCard";
 import { StatCard } from "./components/StatCard";
 import { Header } from "./components/Header";
+import { HeroSection } from "./components/HeroSection";
+import { RegistrationForm } from "./components/RegistrationForm";
 import { ProblemSolutionPage } from "./components/ProblemSolutionPage";
 import { RegionSelector } from "./components/RegionSelector";
 import { TutorialTooltip } from "./components/TutorialTooltip";
 import { Button } from "./components/ui/button";
-import { AlertCircle, ArrowLeft, ArrowRight, Globe, Leaf } from "lucide-react";
+import { ArrowLeft, Globe, Leaf } from "lucide-react";
 import { useState, useRef, useEffect, useMemo } from "react";
 import ecoProblemsData from "./data/EcoProblems.json";
 import { ActivistResources } from "./components/ActivistResources";
@@ -89,11 +91,16 @@ const stats = [
   { value: "7M", label: "Annual Deaths from Air Pollution", trend: "Rising" }
 ];
 
-type AppView = "home" | "resources";
+type AppView = "home" | "resources" | "involved";
 
 const getInitialView = (): AppView => {
-  if (typeof window !== "undefined" && window.location.hash === "#resources") {
-    return "resources";
+  if (typeof window !== "undefined") {
+    if (window.location.hash === "#resources") {
+      return "resources";
+    }
+    if (window.location.hash === "#involved") {
+      return "involved";
+    }
   }
   return "home";
 };
@@ -153,6 +160,8 @@ export default function App() {
     if (typeof window !== "undefined") {
       if (next === "resources") {
         window.location.hash = "#resources";
+      } else if (next === "involved") {
+        window.location.hash = "#involved";
       } else {
         window.history.replaceState(
           null,
@@ -226,46 +235,33 @@ export default function App() {
     );
   }
 
+  if (view === "involved") {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-emerald-50 to-white">
+        <Header
+          onNavigateToResources={() => navigateTo("resources")}
+          onNavigateToInvolved={() => navigateTo("involved")}
+        />
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 flex justify-center items-center">
+          <RegistrationForm />
+        </main>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-emerald-50 to-white">
       {/* Navigation Header */}
-      <Header onNavigateToResources={() => navigateTo("resources")} />
-      
-      {/* Hero Section */} 
-      <header className="relative bg-gradient-to-r from-emerald-900 to-teal-800 text-white overflow-hidden">
-        <div className="absolute inset-0 bg-black/30"></div>
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-32">
-          <div className="max-w-3xl">
-            <div className="flex items-center gap-2 mb-6">
-              <AlertCircle className="w-8 h-8 text-red-400" />
-              <span className="text-red-400 uppercase tracking-wider">Critical Issues</span>
-            </div>
-            <h1 className="text-white mb-6">
-              The Most Pressing Ecological Problems of Our Time
-            </h1>
-            <p className="text-xl text-emerald-100 mb-8">
-              Understanding the urgent environmental challenges we face is the first step toward meaningful action. 
-              These are the critical issues demanding immediate attention.
-            </p>
-            <div className="flex flex-wrap gap-4">
-              <Button size="lg" className="bg-white text-emerald-900 hover:bg-emerald-50" onClick={handleSavePlanetClick}>
-                Save Planet
-                <ArrowRight className="ml-2 w-4 h-4" />
-              </Button>
-              <Button 
-                size="lg" 
-                variant="outline" 
-                className={`border-white text-white hover:bg-white/10 transition-all ${
-                  highlightTakeAction ? 'ring-4 ring-yellow-400 ring-opacity-75 animate-pulse' : ''
-                }`}
-                onClick={handleTakeActionClick}
-              >
-                Take Action!
-              </Button>
-            </div>
-          </div>
-        </div>
-      </header>
+      <Header
+        onNavigateToResources={() => navigateTo("resources")}
+        onNavigateToInvolved={() => navigateTo("involved")}
+      />
+
+      <HeroSection
+        highlightTakeAction={highlightTakeAction}
+        onSavePlanetClick={handleSavePlanetClick}
+        onTakeActionClick={handleTakeActionClick}
+      />
 
       {/* Stats Section */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-12 relative z-10">
@@ -320,7 +316,11 @@ export default function App() {
             Stay informed, reduce your environmental impact, and support sustainable initiatives.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
-            <Button size="lg" className="bg-white text-emerald-900 hover:bg-emerald-50" onClick={handleTakeActionClick}>
+            <Button
+              size="lg"
+              className="bg-white text-emerald-900 hover:bg-emerald-50"
+              onClick={() => navigateTo("involved")}
+            >
               Get Involved
             </Button>
             <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/10">
