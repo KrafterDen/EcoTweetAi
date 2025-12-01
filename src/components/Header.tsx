@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button } from "./ui/button";
-import { Globe, Menu, X, Leaf, TrendingUp, Users, BookOpen } from "lucide-react";
+import { Menu, X, TrendingUp, Users, BookOpen, Sparkles } from "lucide-react";
 
 interface HeaderProps {
   onNavigateToResources?: () => void;
@@ -20,14 +20,15 @@ export function Header({ onNavigateToResources }: HeaderProps) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo/Brand */}
-          <div className="flex items-center gap-2">
-            <div className="relative">
-              <Globe className="w-8 h-8 text-emerald-600" />
-              <Leaf className="w-4 h-4 text-teal-500 absolute -bottom-1 -right-1" />
-            </div>
+          <div className="flex items-center gap-3">
+            <img
+              src="/logo.png"
+              alt="EcoTweetAI logo"
+              className="w-10 h-10 rounded-lg object-contain shadow-sm"
+            />
             <div className="flex flex-col">
-              <span className="text-emerald-900 tracking-tight">EcoAlert</span>
-              <span className="text-xs text-emerald-600 -mt-1">Environmental Awareness</span>
+              <span className="text-emerald-900 tracking-tight">EcoTweetAI</span>
+              <span className="text-xs text-emerald-600 -mt-1">Crowd platform</span>
             </div>
           </div>
 
@@ -56,8 +57,15 @@ export function Header({ onNavigateToResources }: HeaderProps) {
 
           {/* CTA Button */}
           <div className="hidden md:block">
-            <Button className="bg-emerald-600 hover:bg-emerald-700 text-white">
-              Take Action
+            <Button className="group relative overflow-hidden rounded-full border border-red-200 bg-red-600 px-4 text-white shadow-[0_12px_35px_-18px_rgba(239,68,68,0.8)] transition-all hover:-translate-y-0.5 hover:border-red-300 hover:bg-red-700 hover:shadow-[0_14px_45px_-16px_rgba(220,38,38,0.85)]">
+              <span
+                className="pointer-events-none absolute inset-0 bg-gradient-to-r from-white/10 via-rose-200/20 to-white/10 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                aria-hidden="true"
+              />
+              <span className="relative flex items-center font-semibold">
+                <Sparkles className="mr-2 h-4 w-4 text-white" />
+                Report problem
+              </span>
             </Button>
           </div>
 
@@ -99,8 +107,15 @@ export function Header({ onNavigateToResources }: HeaderProps) {
                   </a>
                 );
               })}
-              <Button className="bg-emerald-600 hover:bg-emerald-700 text-white w-full mt-2">
-                Take Action
+              <Button className="group relative mt-2 w-full overflow-hidden rounded-full border border-red-200 bg-red-600 px-4 text-white shadow-[0_12px_35px_-18px_rgba(239,68,68,0.8)] transition-all hover:-translate-y-0.5 hover:border-red-300 hover:bg-red-700 hover:shadow-[0_14px_45px_-16px_rgba(220,38,38,0.85)]">
+                <span
+                  className="pointer-events-none absolute inset-0 bg-gradient-to-r from-white/10 via-rose-200/20 to-white/10 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                  aria-hidden="true"
+                />
+                <span className="relative flex items-center justify-center font-semibold">
+                  <Sparkles className="mr-2 h-4 w-4 text-white" />
+                  Suggest a problem
+                </span>
               </Button>
             </div>
           </div>
