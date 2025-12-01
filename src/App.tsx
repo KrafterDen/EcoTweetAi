@@ -231,7 +231,7 @@ export default function App() {
       {/* Navigation Header */}
       <Header onNavigateToResources={() => navigateTo("resources")} />
       
-      {/* Hero Section */}
+      {/* Hero Section */} 
       <header className="relative bg-gradient-to-r from-emerald-900 to-teal-800 text-white overflow-hidden">
         <div className="absolute inset-0 bg-black/30"></div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-32">
