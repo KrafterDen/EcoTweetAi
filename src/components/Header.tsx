@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button } from "./ui/button";
-import { Menu, X, TrendingUp, Users, BookOpen, Sparkles } from "lucide-react";
+import { Menu, X, TrendingUp, Users, BookOpen, AlertTriangle } from "lucide-react";
 
 interface HeaderProps {
   onNavigateToResources?: () => void;
@@ -57,15 +57,9 @@ export function Header({ onNavigateToResources }: HeaderProps) {
 
           {/* CTA Button */}
           <div className="hidden md:block">
-            <Button className="group relative overflow-hidden rounded-full border border-red-200 bg-red-600 px-4 text-white shadow-[0_12px_35px_-18px_rgba(239,68,68,0.8)] transition-all hover:-translate-y-0.5 hover:border-red-300 hover:bg-red-700 hover:shadow-[0_14px_45px_-16px_rgba(220,38,38,0.85)]">
-              <span
-                className="pointer-events-none absolute inset-0 bg-gradient-to-r from-white/10 via-rose-200/20 to-white/10 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-                aria-hidden="true"
-              />
-              <span className="relative flex items-center font-semibold">
-                <Sparkles className="mr-2 h-4 w-4 text-white" />
-                Report problem
-              </span>
+            <Button className="rounded-full border bg-red-700 px-5 text-white shadow-md shadow-red-300/60 transition-colors hover:bg-emerald-600 active:bg-emerald-400">
+              <AlertTriangle className="mr-2 h-4 w-4" />
+              Report problem
             </Button>
           </div>
 
@@ -107,15 +101,9 @@ export function Header({ onNavigateToResources }: HeaderProps) {
                   </a>
                 );
               })}
-              <Button className="group relative mt-2 w-full overflow-hidden rounded-full border border-red-200 bg-red-600 px-4 text-white shadow-[0_12px_35px_-18px_rgba(239,68,68,0.8)] transition-all hover:-translate-y-0.5 hover:border-red-300 hover:bg-red-700 hover:shadow-[0_14px_45px_-16px_rgba(220,38,38,0.85)]">
-                <span
-                  className="pointer-events-none absolute inset-0 bg-gradient-to-r from-white/10 via-rose-200/20 to-white/10 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-                  aria-hidden="true"
-                />
-                <span className="relative flex items-center justify-center font-semibold">
-                  <Sparkles className="mr-2 h-4 w-4 text-white" />
-                  Suggest a problem
-                </span>
+              <Button className="mt-2 w-full rounded-full border border-red-700 bg-red-600 px-5 text-white shadow-md shadow-red-300/60 transition-colors hover:bg-red-700 hover:border-red-800 active:bg-red-800">
+                <AlertTriangle className="mr-2 h-4 w-4" />
+                Suggest a problem
               </Button>
             </div>
           </div>
