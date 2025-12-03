@@ -8,16 +8,9 @@ import {
   SelectValue,
 } from "./ui/select";
 
-// Типы данных
-export type RegionValue =
-  | "GLOBAL"
-  | "ASIA"
-  | "EUROPE"
-  | "NORTH_AMERICA"
-  | "SOUTH_AMERICA"
-  | "AFRICA"
-  | "ANTARCTICA"
-  | "OCEANIA";
+import type { RegionValue } from "../types";
+export type { RegionValue } from "../types";
+import { regions, countriesByRegion, citiesByCountry } from "../data/regions";
 
 interface RegionSelectorProps {
   selectedRegion: RegionValue;
@@ -27,34 +20,6 @@ interface RegionSelectorProps {
   onCountryChange: (value: string) => void;
   onCityChange: (value: string) => void;
 }
-
-// Хардкод данных
-const regions: { value: RegionValue; label: string }[] = [
-  { value: "GLOBAL", label: "Global" },
-  { value: "EUROPE", label: "Europe" },
-  { value: "ASIA", label: "Asia" },
-  { value: "NORTH_AMERICA", label: "North America" },
-  { value: "SOUTH_AMERICA", label: "South America" },
-  { value: "AFRICA", label: "Africa" },
-  { value: "ANTARCTICA", label: "Antarctica" },
-  { value: "OCEANIA", label: "Oceania" },
-];
-
-const countriesByRegion: Partial<Record<RegionValue, string[]>> = {
-  EUROPE: ["Ukraine", "Poland", "Germany", "France", "United Kingdom", "Italy", "Spain"],
-  ASIA: ["China", "Japan", "India", "South Korea", "Indonesia", "Vietnam"],
-  NORTH_AMERICA: ["USA", "Canada", "Mexico"],
-  SOUTH_AMERICA: ["Brazil", "Argentina", "Chile", "Colombia"],
-  AFRICA: ["Egypt", "South Africa", "Nigeria", "Kenya"],
-  OCEANIA: ["Australia", "New Zealand"],
-  // ANTARCTICA обычно без стран в классическом понимании для таких списков
-};
-
-// Города расписаны только для Украины
-const citiesByCountry: Record<string, string[]> = {
-  Ukraine: ["Kyiv", "Lviv", "Odesa", "Kharkiv", "Dnipro", "Zaporizhzhia"],
-  // Для остальных стран можно вернуть пустой массив или добавить позже
-};
 
 export const RegionSelector = forwardRef<HTMLDivElement, RegionSelectorProps>(
   (

@@ -1,13 +1,6 @@
 import rawSolutions from "../data/EcoProblemSolutions.json";
-
-export interface SolutionRecord {
-  id: string;
-  problem_id: string;
-  author: string;
-  time_posted: string;
-  content: string;
-  votes: number;
-}
+import type { SolutionRecord } from "../types";
+export type { SolutionRecord } from "../types";
 
 const STORAGE_KEY = "eco-problem-solutions";
 const baseSolutions = rawSolutions as SolutionRecord[];

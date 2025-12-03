@@ -5,8 +5,7 @@ import { Header } from "./components/Header";
 import { HeroSection } from "./components/HeroSection";
 import { RegistrationForm } from "./components/RegistrationForm";
 import { ProblemSolutionPage } from "./components/ProblemSolutionPage";
-// Импортируем сам компонент и тип данных из него
-import { RegionSelector, RegionValue } from "./components/RegionSelector";
+import { RegionSelector } from "./components/RegionSelector";
 import { TutorialTooltip } from "./components/TutorialTooltip";
 import { ReportProblemForm } from "./components/ReportProblemForm";
 import { Button } from "./components/ui/button";
@@ -25,45 +24,8 @@ import {
 import { useState, useRef, useEffect, useMemo } from "react";
 import ecoProblemsData from "./data/EcoProblems.json";
 import { ActivistResources } from "./components/ActivistResources";
-
-// Локальное определение RegionValue удалено, используется импорт из компонента
-
-interface EcoProblem {
-  id: string;
-  title: string;
-  description: string;
-  imageUrl: string;
-  urgencyLevel: number;
-  impactedPopulation: string;
-  timeframe: string;
-  tags: string[];
-  continent: string;
-  lastUpdated: string;
-}
-
-type EcoProblemRecord = {
-  id: string;
-  continent: string;
-  title: string;
-  description: string;
-  urgency_percent: number;
-  affected_population: number;
-  critical_timeframe: string;
-  tags: string[];
-  image_url: string;
-  last_updated: string;
-};
-
-const regionToContinentMap: Record<RegionValue, string | null> = {
-  GLOBAL: null,
-  ASIA: "Asia",
-  EUROPE: "Europe",
-  NORTH_AMERICA: "North America",
-  SOUTH_AMERICA: "South America",
-  AFRICA: "Africa",
-  ANTARCTICA: "Antarctica",
-  OCEANIA: "Oceania",
-};
+import { EcoProblem, EcoProblemRecord, RegionValue } from "./types";
+import { regionToContinentMap } from "./data/regions";
 
 const formatPopulation = (value: number) => {
   if (value >= 1_000_000_000) {
@@ -79,6 +41,8 @@ const allEcoProblems: EcoProblem[] = (ecoProblemsData as EcoProblemRecord[]).map
   (problem) => ({
     id: problem.id,
     continent: problem.continent,
+    country: problem.country,
+    city: problem.city,
     title: problem.title,
     description: problem.description,
     imageUrl: problem.image_url,
@@ -199,14 +163,21 @@ export default function App() {
   };
 
   const filteredProblems = useMemo(() => {
-    // Базовая фильтрация по региону (континенту)
-    // TODO: В будущем добавить фильтрацию по стране и городу, если данные JSON будут содержать эти поля
     const continent = regionToContinentMap[selectedRegion];
-    if (!continent) {
-      return allEcoProblems;
+    let problems = !continent
+      ? allEcoProblems
+      : allEcoProblems.filter((problem) => problem.continent === continent);
+
+    if (selectedCountry && problems.some((problem) => problem.country)) {
+      problems = problems.filter((problem) => problem.country === selectedCountry);
     }
-    return allEcoProblems.filter((problem) => problem.continent === continent);
-  }, [selectedRegion]);
+
+    if (selectedCity && problems.some((problem) => problem.city)) {
+      problems = problems.filter((problem) => problem.city === selectedCity);
+    }
+
+    return problems;
+  }, [selectedRegion, selectedCountry, selectedCity]);
 
   const closeTutorial = () => {
     setTutorialStep(0);

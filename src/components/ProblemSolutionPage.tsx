@@ -2,21 +2,8 @@ import { useEffect, useState } from "react";
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
 import { ArrowLeft, ChevronUp, ChevronDown, Send, Users, Clock, AlertTriangle } from "lucide-react";
-import {
-  SolutionRecord,
-  addSolutionRecord,
-  getSolutionsByProblem,
-} from "../utils/solutionsStorage";
-
-interface Solution {
-  id: string;
-  author: string;
-  timePosted: string;
-  content: string;
-  votes: number;
-  upvoted?: boolean;
-  downvoted?: boolean;
-}
+import { addSolutionRecord, getSolutionsByProblem } from "../utils/solutionsStorage";
+import type { Solution, SolutionRecord } from "../types";
 
 interface ProblemSolutionPageProps {
   id: string;

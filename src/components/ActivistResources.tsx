@@ -3,41 +3,26 @@ import { Twitter } from "lucide-react";
 import { Badge } from "./ui/badge";
 import activistsData from "../data/environmental_activists.json";
 import profilePayload from "../data/environmental_activists_profiles.json";
-
-interface ActivistRecord {
-  name: string;
-  continent: string;
-  x_handle: string;
-  handle_confidence: "high" | "medium" | "low";
-}
-
-interface ActivistProfile {
-  username: string;
-  displayName: string;
-  description: string;
-  profileImageUrl?: string;
-  fetchedAt?: string;
-}
-
-interface ProfilesFile {
-  profiles?: Record<string, ActivistProfile>;
-  generatedAt?: string;
-  source?: string;
-}
+import type {
+  Activist,
+  ActivistProfile,
+  ActivistProfilesFile,
+  HandleConfidence,
+} from "../types";
 
 type ContinentFilter = string | "ALL";
 
 const profileMap: Record<string, ActivistProfile> =
-  (profilePayload as ProfilesFile)?.profiles ?? {};
+  (profilePayload as ActivistProfilesFile)?.profiles ?? {};
 
 const uniqueContinents = Array.from(
-  new Set(activistsData.map((activist) => activist.continent))
+  new Set((activistsData as Activist[]).map((activist) => activist.continent))
 ).sort();
 
 const formatHandle = (handle: string) => handle.trim().replace(/^@/, "");
 
 const confidenceClasses: Record<
-  ActivistRecord["handle_confidence"],
+  HandleConfidence,
   string
 > = {
   high: "bg-emerald-50 text-emerald-900 border border-emerald-100",
@@ -45,7 +30,7 @@ const confidenceClasses: Record<
   low: "bg-rose-50 text-rose-900 border border-rose-100",
 };
 
-const confidenceCopy: Record<ActivistRecord["handle_confidence"], string> = {
+const confidenceCopy: Record<HandleConfidence, string> = {
   high: "handle verified by multiple sources",
   medium: "handle verified by one trusted source",
   low: "handle confidence needs review",
@@ -69,7 +54,7 @@ export function ActivistResources() {
 
   const filteredActivists = useMemo(() => {
     const normalizedSearch = searchTerm.trim().toLowerCase();
-    return (activistsData as ActivistRecord[])
+    return (activistsData as Activist[])
       .filter((activist) => {
         if (continentFilter === "ALL") {
           return true;
