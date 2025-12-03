@@ -1,13 +1,26 @@
 import { EcoProblemCard } from "./components/EcoProblemCard";
-import { StatCard } from "./components/StatCard";
+// StatCard больше не нужен для новой сложной верстки, мы сделаем кастомные карточки
+// import { StatCard } from "./components/StatCard"; 
 import { Header } from "./components/Header";
 import { HeroSection } from "./components/HeroSection";
 import { RegistrationForm } from "./components/RegistrationForm";
 import { ProblemSolutionPage } from "./components/ProblemSolutionPage";
 import { RegionSelector } from "./components/RegionSelector";
 import { TutorialTooltip } from "./components/TutorialTooltip";
+import { ReportProblemForm } from "./components/ReportProblemForm";
 import { Button } from "./components/ui/button";
-import { ArrowLeft, Globe, Leaf } from "lucide-react";
+import { 
+  ArrowLeft, 
+  Globe, 
+  Leaf, 
+  MapPin, 
+  AlertTriangle, 
+  Lightbulb, 
+  Trophy, 
+  Activity, 
+  ArrowRight,
+  User
+} from "lucide-react";
 import { useState, useRef, useEffect, useMemo } from "react";
 import ecoProblemsData from "./data/EcoProblems.json";
 import { ActivistResources } from "./components/ActivistResources";
@@ -84,13 +97,6 @@ const allEcoProblems: EcoProblem[] = (ecoProblemsData as EcoProblemRecord[]).map
   })
 );
 
-const stats = [
-  { value: "1.5°C", label: "Global Temperature Rise Since 1850", trend: "+0.2°C/decade" },
-  { value: "1M+", label: "Species at Risk of Extinction", trend: "Accelerating" },
-  { value: "8M Tons", label: "Plastic Entering Oceans Yearly", trend: "Increasing" },
-  { value: "7M", label: "Annual Deaths from Air Pollution", trend: "Rising" }
-];
-
 type AppView = "home" | "resources" | "involved";
 
 const getInitialView = (): AppView => {
@@ -111,20 +117,19 @@ export default function App() {
   const [tutorialStep, setTutorialStep] = useState<number>(0);
   const [highlightTakeAction, setHighlightTakeAction] = useState(false);
   const [view, setView] = useState<AppView>(() => getInitialView());
+  const [reportProblemOpen, setReportProblemOpen] = useState(false);
   
   const regionSelectorRef = useRef<HTMLDivElement>(null);
   const problemsGridRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (tutorialStep === 1 && regionSelectorRef.current) {
-      // Scroll to region selector with some offset
       const elementTop = regionSelectorRef.current.getBoundingClientRect().top + window.scrollY;
       window.scrollTo({
         top: elementTop - 150,
         behavior: "smooth"
       });
     } else if (tutorialStep === 2 && problemsGridRef.current) {
-      // Scroll to problems grid
       const elementTop = problemsGridRef.current.getBoundingClientRect().top + window.scrollY;
       window.scrollTo({
         top: elementTop - 100,
@@ -192,6 +197,20 @@ export default function App() {
     setTutorialStep(0);
   };
 
+  const reportProblemOverlay = reportProblemOpen ? (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4"
+      onClick={() => setReportProblemOpen(false)}
+    >
+      <div
+        className="max-h-[90vh] overflow-y-auto"
+        onClick={(event) => event.stopPropagation()}
+      >
+        <ReportProblemForm />
+      </div>
+    </div>
+  ) : null;
+
   if (selectedProblem) {
     return (
       <ProblemSolutionPage
@@ -204,8 +223,12 @@ export default function App() {
   if (view === "resources") {
     return (
       <div className="min-h-screen bg-gradient-to-b from-emerald-50 to-white">
-        <Header onNavigateToResources={() => navigateTo("resources")} />
+        <Header
+          onNavigateToResources={() => navigateTo("resources")}
+          onReportProblem={() => setReportProblemOpen(true)}
+        />
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          {/* Resource View Content */}
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-10">
             <div className="space-y-3">
               <p className="text-sm uppercase tracking-[0.3em] text-emerald-600">
@@ -231,6 +254,7 @@ export default function App() {
           </div>
           <ActivistResources />
         </main>
+        {reportProblemOverlay}
       </div>
     );
   }
@@ -241,10 +265,12 @@ export default function App() {
         <Header
           onNavigateToResources={() => navigateTo("resources")}
           onNavigateToInvolved={() => navigateTo("involved")}
+          onReportProblem={() => setReportProblemOpen(true)}
         />
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 flex justify-center items-center">
           <RegistrationForm />
         </main>
+        {reportProblemOverlay}
       </div>
     );
   }
@@ -255,6 +281,7 @@ export default function App() {
       <Header
         onNavigateToResources={() => navigateTo("resources")}
         onNavigateToInvolved={() => navigateTo("involved")}
+        onReportProblem={() => setReportProblemOpen(true)}
       />
 
       <HeroSection
@@ -263,12 +290,134 @@ export default function App() {
         onTakeActionClick={handleTakeActionClick}
       />
 
-      {/* Stats Section */}
+      {/* NEW STATS SECTION (Custom Layout) */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-12 relative z-10">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {stats.map((stat, index) => (
-            <StatCard key={index} {...stat} />
-          ))}
+          
+          {/* Card 1: Problem of the Week */}
+          <div className="bg-white p-5 rounded-xl shadow-sm border border-emerald-100/60 hover:shadow-md transition-all flex flex-col justify-between h-full">
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-100">
+                  Problem of the Week
+                </span>
+                <AlertTriangle className="w-4 h-4 text-amber-500" />
+              </div>
+              <h3 className="font-semibold text-gray-900 leading-tight mb-1">
+                Urban Smog Crisis
+              </h3>
+              <div className="flex items-center text-xs text-gray-500 mb-3 space-x-2">
+                <div className="flex items-center">
+                  <MapPin className="w-3 h-3 mr-0.5" />
+                  Kyiv, UA
+                </div>
+                <span className="w-1 h-1 bg-gray-300 rounded-full"></span>
+                <div className="text-amber-600 font-medium">92% Urgency</div>
+              </div>
+            </div>
+            <div className="pt-3 border-t border-gray-100 flex items-center text-xs text-gray-500">
+              <span className="bg-gray-100 p-1 rounded-full mr-2">
+                 <User className="w-3 h-3 text-gray-600"/>
+              </span>
+              Suggested by <span className="font-medium text-gray-900 ml-1">@alex_ua</span>
+            </div>
+          </div>
+
+          {/* Card 2: Solution of the Week */}
+          <div className="bg-white p-5 rounded-xl shadow-sm border border-emerald-100/60 hover:shadow-md transition-all flex flex-col justify-between h-full">
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full border border-blue-100">
+                  Solution of the Week
+                </span>
+                <Lightbulb className="w-4 h-4 text-blue-500" />
+              </div>
+              <h3 className="font-semibold text-gray-900 leading-tight mb-1">
+                Bio-Moss Filtration
+              </h3>
+              <p className="text-xs text-gray-500 line-clamp-2 mb-2">
+                Vertical moss walls that absorb dust & toxins equal to 200 trees.
+              </p>
+              <div className="text-[10px] text-gray-400">
+                Fix for: <span className="text-gray-600">Urban Smog Crisis</span>
+              </div>
+            </div>
+            <div className="pt-3 border-t border-gray-100 flex items-center text-xs text-gray-500 mt-2">
+              <span className="bg-gray-100 p-1 rounded-full mr-2">
+                 <User className="w-3 h-3 text-gray-600"/>
+              </span>
+              Proposed by <span className="font-medium text-gray-900 ml-1">@maria_eco</span>
+            </div>
+          </div>
+
+          {/* Card 3: Eco-Hero of the Week */}
+          <div className="bg-white p-5 rounded-xl shadow-sm border border-emerald-100/60 hover:shadow-md transition-all flex flex-col justify-between h-full bg-gradient-to-br from-white to-purple-50/30">
+            <div>
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-purple-600 bg-purple-50 px-2 py-0.5 rounded-full border border-purple-100">
+                  Eco-Hero
+                </span>
+                <Trophy className="w-4 h-4 text-purple-500" />
+              </div>
+              <div className="flex items-center space-x-3 mb-3">
+                 <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center text-purple-700 font-bold border-2 border-white shadow-sm">
+                    T22
+                 </div>
+                 <div>
+                    <h3 className="font-bold text-gray-900">@taras_22</h3>
+                    <div className="text-xs text-gray-500">Most active contributor</div>
+                 </div>
+              </div>
+              <div className="grid grid-cols-3 gap-1 text-center">
+                  <div className="bg-white rounded border border-gray-100 py-1">
+                      <div className="text-xs font-bold text-gray-800">12</div>
+                      <div className="text-xs text-gray-400">Issues</div>
+                  </div>
+                  <div className="bg-white rounded border border-gray-100 py-1">
+                      <div className="text-xs font-bold text-gray-800">7</div>
+                      <div className="text-xs text-gray-400">Sols</div>
+                  </div>
+                  <div className="bg-white rounded border border-gray-100 py-1">
+                      <div className="text-xs font-bold text-gray-800">54</div>
+                      <div className="text-xs text-gray-400">Votes</div>
+                  </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Card 4: Community Impact */}
+          <div className="bg-emerald-600 p-5 rounded-xl shadow-sm border border-emerald-600 hover:shadow-md transition-all flex flex-col justify-between h-full text-white">
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="font-semibold text-emerald-50 leading-tight">
+                  Community Impact
+                </h3>
+                <Activity className="w-4 h-4 text-emerald-200" />
+              </div>
+              <div className="space-y-1.5 mb-3">
+                 <div className="flex items-center justify-between text-sm">
+                    <span className="text-emerald-100">New Problems</span>
+                    <span className="font-bold">+32</span>
+                 </div>
+                 <div className="flex items-center justify-between text-sm">
+                    <span className="text-emerald-100">New Solutions</span>
+                    <span className="font-bold">+18</span>
+                 </div>
+                 <div className="flex items-center justify-between text-sm">
+                    <span className="text-emerald-100">Votes Cast</span>
+                    <span className="font-bold">240</span>
+                 </div>
+              </div>
+            </div>
+            <button 
+                onClick={() => navigateTo("involved")}
+                className="w-full py-2 bg-white/10 hover:bg-white/20 rounded-lg text-xs font-medium text-white transition-colors flex items-center justify-center"
+            >
+              Join the action
+              <ArrowRight className="w-3 h-3 ml-1.5" />
+            </button>
+          </div>
+
         </div>
       </section>
 
@@ -337,6 +486,7 @@ export default function App() {
           onClose={closeTutorial}
         />
       )}
+      {reportProblemOverlay}
     </div>
   );
 }

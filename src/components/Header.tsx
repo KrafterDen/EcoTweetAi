@@ -5,9 +5,14 @@ import { Menu, X, TrendingUp, Users, BookOpen, AlertTriangle } from "lucide-reac
 interface HeaderProps {
   onNavigateToResources?: () => void;
   onNavigateToInvolved?: () => void;
+  onReportProblem?: () => void;
 }
 
-export function Header({ onNavigateToResources, onNavigateToInvolved }: HeaderProps) {
+export function Header({
+  onNavigateToResources,
+  onNavigateToInvolved,
+  onReportProblem,
+}: HeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navLinks = [
@@ -62,7 +67,10 @@ export function Header({ onNavigateToResources, onNavigateToInvolved }: HeaderPr
 
           {/* CTA Button */}
           <div className="hidden md:block">
-            <Button className="rounded-full border bg-red-700 px-5 text-white shadow-md shadow-red-300/60 transition-colors hover:bg-emerald-600 active:bg-emerald-400">
+            <Button
+              className="rounded-full border bg-red-700 px-5 text-white shadow-md shadow-red-300/60 transition-colors hover:bg-emerald-600 active:bg-emerald-400"
+              onClick={onReportProblem}
+            >
               <AlertTriangle className="mr-2 h-4 w-4" />
               Report problem
             </Button>
@@ -110,7 +118,13 @@ export function Header({ onNavigateToResources, onNavigateToInvolved }: HeaderPr
                   </a>
                 );
               })}
-              <Button className="mt-2 w-full rounded-full border border-red-700 bg-red-600 px-5 text-white shadow-md shadow-red-300/60 transition-colors hover:bg-red-700 hover:border-red-800 active:bg-red-800">
+              <Button
+                className="mt-2 w-full rounded-full border border-red-700 bg-red-600 px-5 text-white shadow-md shadow-red-300/60 transition-colors hover:bg-red-700 hover:border-red-800 active:bg-red-800"
+                onClick={() => {
+                  onReportProblem?.();
+                  setMobileMenuOpen(false);
+                }}
+              >
                 <AlertTriangle className="mr-2 h-4 w-4" />
                 Suggest a problem
               </Button>

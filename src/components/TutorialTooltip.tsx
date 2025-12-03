@@ -24,7 +24,7 @@ export function TutorialTooltip({ step, onClose }: TutorialTooltipProps) {
       
       {/* Floating tooltip */}
       <div 
-        className="fixed left-1/2 -translate-x-1/2 z-50 animate-in fade-in slide-in-from-top-4 duration-500"
+        className="fixed left-1/2 -translate-x-2/4 z-50 animate-in fade-in slide-in-from-top-4 duration-500"
         style={{ 
           top: step === 1 ? '40%' : '50%',
         }}

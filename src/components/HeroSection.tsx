@@ -33,7 +33,7 @@ const LiveFeed = () => {
   
   useEffect(() => {
     const names = ["Alex", "Maria", "EcoBot", "Helga", "Dmytro", "Yuki", "Carlos"];
-    const actions = ["funded project in", "sent help to", "verified data in"];
+    const actions = ["reported problem in", "suggeted solution for problem in" ];
     const locations = ["Kyiv", "Donbas", "Amazon", "Sahara", "Venice", "California"];
 
     const addNotification = () => {
@@ -216,7 +216,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
       <div className="absolute top-0 left-0 w-full md:w-3/5 h-full bg-gradient-to-b md:bg-gradient-to-r from-[#013220] via-[#013220]/80 to-transparent z-0 pointer-events-none" />
 
       {/* Content */}
-      <div className="relative z-10 max-w-2xl mx-auto md:ml-[18%] md:mx-0 h-full flex flex-col justify-center px-4 md:px-0 text-center md:text-left pointer-events-none">
+      <div className="relative z-10 max-w-2xl mx-auto md:ml-[14%] md:mx-0 h-full flex flex-col justify-center px-4 md:px-0 text-center md:text-left pointer-events-none">
         <div className="pointer-events-auto">
             <div className="inline-flex items-center text-[#ff6b6b] font-bold text-xs md:text-sm tracking-wider mb-4 uppercase bg-[#ff6b6b]/10 px-3 py-1 rounded-full border border-[#ff6b6b]/20">
               <span className="flex items-center justify-center w-4 h-4 bg-[#ff6b6b] text-[#013220] rounded-full mr-2 text-[10px] font-bold">!</span>
@@ -224,11 +224,11 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             </div>
             
             <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight text-white drop-shadow-lg">
-              Visualizing the <br className="hidden md:block"/> Planet's Needs
+              The place where <br className="hidden md:block"/> problems are solved
             </h1>
             
             <p className="text-base md:text-lg text-[#e0e0e0] leading-relaxed mb-8 md:mb-10 font-light max-w-lg mx-auto md:mx-0">
-              EcoTweetAI connects technological solutions with disaster points. 
+              EcoTweetAI connects people for solving enviromental problems. <br className="hidden md:block"/>
               Watch the world unite in real-time.
             </p>
             
