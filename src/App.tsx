@@ -5,7 +5,8 @@ import { Header } from "./components/Header";
 import { HeroSection } from "./components/HeroSection";
 import { RegistrationForm } from "./components/RegistrationForm";
 import { ProblemSolutionPage } from "./components/ProblemSolutionPage";
-import { RegionSelector } from "./components/RegionSelector";
+// Импортируем сам компонент и тип данных из него
+import { RegionSelector, RegionValue } from "./components/RegionSelector";
 import { TutorialTooltip } from "./components/TutorialTooltip";
 import { ReportProblemForm } from "./components/ReportProblemForm";
 import { Button } from "./components/ui/button";
@@ -25,15 +26,7 @@ import { useState, useRef, useEffect, useMemo } from "react";
 import ecoProblemsData from "./data/EcoProblems.json";
 import { ActivistResources } from "./components/ActivistResources";
 
-type RegionValue =
-  | "GLOBAL"
-  | "ASIA"
-  | "EUROPE"
-  | "NORTH_AMERICA"
-  | "SOUTH_AMERICA"
-  | "AFRICA"
-  | "ANTARCTICA"
-  | "OCEANIA";
+// Локальное определение RegionValue удалено, используется импорт из компонента
 
 interface EcoProblem {
   id: string;
@@ -113,7 +106,12 @@ const getInitialView = (): AppView => {
 
 export default function App() {
   const [selectedProblem, setSelectedProblem] = useState<EcoProblem | null>(null);
+  
+  // Состояние для сложного селектора
   const [selectedRegion, setSelectedRegion] = useState<RegionValue>("GLOBAL");
+  const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
+  const [selectedCity, setSelectedCity] = useState<string | null>(null);
+
   const [tutorialStep, setTutorialStep] = useState<number>(0);
   const [highlightTakeAction, setHighlightTakeAction] = useState(false);
   const [view, setView] = useState<AppView>(() => getInitialView());
@@ -178,14 +176,31 @@ export default function App() {
     }
   };
 
-  const handleRegionChange = (value: string) => {
-    setSelectedRegion(value as RegionValue);
+  // Хендлеры для обновления состояния селектора
+  const handleRegionChange = (value: RegionValue) => {
+    setSelectedRegion(value);
+    // При смене региона сбрасываем страну и город
+    setSelectedCountry(null);
+    setSelectedCity(null);
+    
     if (tutorialStep === 1) {
       setTutorialStep(2);
     }
   };
 
+  const handleCountryChange = (value: string) => {
+    setSelectedCountry(value);
+    // При смене страны сбрасываем город
+    setSelectedCity(null);
+  };
+
+  const handleCityChange = (value: string) => {
+    setSelectedCity(value);
+  };
+
   const filteredProblems = useMemo(() => {
+    // Базовая фильтрация по региону (континенту)
+    // TODO: В будущем добавить фильтрацию по стране и городу, если данные JSON будут содержать эти поля
     const continent = regionToContinentMap[selectedRegion];
     if (!continent) {
       return allEcoProblems;
@@ -361,7 +376,7 @@ export default function App() {
               </div>
               <div className="flex items-center space-x-3 mb-3">
                  <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center text-purple-700 font-bold border-2 border-white shadow-sm">
-                    T22
+                   T22
                  </div>
                  <div>
                     <h3 className="font-bold text-gray-900">@taras_22</h3>
@@ -425,11 +440,18 @@ export default function App() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         {/* Introduction */}
         <div className="text-center mb-12">
+          
+          {/* ОБНОВЛЕННЫЙ КОМПОНЕНТ СЕЛЕКТОРА */}
           <RegionSelector
-            value={selectedRegion}
-            onChange={handleRegionChange}
+            selectedRegion={selectedRegion}
+            selectedCountry={selectedCountry}
+            selectedCity={selectedCity}
+            onRegionChange={handleRegionChange}
+            onCountryChange={handleCountryChange}
+            onCityChange={handleCityChange}
             ref={regionSelectorRef}
           />
+          
           <h2 className="mb-4 mt-6">
             Priority Environmental Issues
           </h2>

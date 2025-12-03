@@ -1,4 +1,4 @@
-import { Globe } from "lucide-react";
+import { Globe, MapPin, Building2 } from "lucide-react";
 import { forwardRef } from "react";
 import {
   Select,
@@ -8,15 +8,31 @@ import {
   SelectValue,
 } from "./ui/select";
 
+// Типы данных
+export type RegionValue =
+  | "GLOBAL"
+  | "ASIA"
+  | "EUROPE"
+  | "NORTH_AMERICA"
+  | "SOUTH_AMERICA"
+  | "AFRICA"
+  | "ANTARCTICA"
+  | "OCEANIA";
+
 interface RegionSelectorProps {
-  value: string;
-  onChange: (value: string) => void;
+  selectedRegion: RegionValue;
+  selectedCountry: string | null;
+  selectedCity: string | null;
+  onRegionChange: (value: RegionValue) => void;
+  onCountryChange: (value: string) => void;
+  onCityChange: (value: string) => void;
 }
 
-const regions = [
+// Хардкод данных
+const regions: { value: RegionValue; label: string }[] = [
   { value: "GLOBAL", label: "Global" },
-  { value: "ASIA", label: "Asia" },
   { value: "EUROPE", label: "Europe" },
+  { value: "ASIA", label: "Asia" },
   { value: "NORTH_AMERICA", label: "North America" },
   { value: "SOUTH_AMERICA", label: "South America" },
   { value: "AFRICA", label: "Africa" },
@@ -24,23 +40,109 @@ const regions = [
   { value: "OCEANIA", label: "Oceania" },
 ];
 
+const countriesByRegion: Partial<Record<RegionValue, string[]>> = {
+  EUROPE: ["Ukraine", "Poland", "Germany", "France", "United Kingdom", "Italy", "Spain"],
+  ASIA: ["China", "Japan", "India", "South Korea", "Indonesia", "Vietnam"],
+  NORTH_AMERICA: ["USA", "Canada", "Mexico"],
+  SOUTH_AMERICA: ["Brazil", "Argentina", "Chile", "Colombia"],
+  AFRICA: ["Egypt", "South Africa", "Nigeria", "Kenya"],
+  OCEANIA: ["Australia", "New Zealand"],
+  // ANTARCTICA обычно без стран в классическом понимании для таких списков
+};
+
+// Города расписаны только для Украины
+const citiesByCountry: Record<string, string[]> = {
+  Ukraine: ["Kyiv", "Lviv", "Odesa", "Kharkiv", "Dnipro", "Zaporizhzhia"],
+  // Для остальных стран можно вернуть пустой массив или добавить позже
+};
+
 export const RegionSelector = forwardRef<HTMLDivElement, RegionSelectorProps>(
-  ({ value, onChange }, ref) => {
+  (
+    {
+      selectedRegion,
+      selectedCountry,
+      selectedCity,
+      onRegionChange,
+      onCountryChange,
+      onCityChange,
+    },
+    ref
+  ) => {
+    // Получаем список стран для выбранного региона
+    const availableCountries = countriesByRegion[selectedRegion] || [];
+    
+    // Получаем список городов для выбранной страны
+    const availableCities = selectedCountry ? citiesByCountry[selectedCountry] || [] : [];
+
+    const isCountryDisabled = selectedRegion === "GLOBAL" || availableCountries.length === 0;
+    const isCityDisabled = !selectedCountry || availableCities.length === 0;
+
     return (
-      <div ref={ref} className="flex items-center justify-center gap-3">
-        <Globe className="w-6 h-6 text-emerald-600" />
-        <Select value={value} onValueChange={onChange}>
-          <SelectTrigger className="w-[200px] border-emerald-200 focus:ring-emerald-500 bg-white">
-            <SelectValue placeholder="Select region" />
-          </SelectTrigger>
-          <SelectContent>
-            {regions.map((region) => (
-              <SelectItem key={region.value} value={region.value}>
-                {region.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+      <div
+        ref={ref}
+        className="flex flex-col md:flex-row items-center justify-center gap-4 p-4 bg-white/50 backdrop-blur-sm rounded-2xl border border-emerald-100/50 shadow-sm inline-flex"
+      >
+        {/* Region Selector */}
+        <div className="flex items-center gap-2">
+          <Globe className="w-5 h-5 text-emerald-600" />
+          <Select
+            value={selectedRegion}
+            onValueChange={(val) => onRegionChange(val as RegionValue)}
+          >
+            <SelectTrigger className="w-[180px] border-emerald-200 focus:ring-emerald-500 bg-white">
+              <SelectValue placeholder="Select region" />
+            </SelectTrigger>
+            <SelectContent>
+              {regions.map((region) => (
+                <SelectItem key={region.value} value={region.value}>
+                  {region.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        {/* Country Selector */}
+        <div className={`flex items-center gap-2 transition-opacity duration-200 ${isCountryDisabled ? 'opacity-50' : 'opacity-100'}`}>
+          <MapPin className="w-5 h-5 text-emerald-600" />
+          <Select
+            value={selectedCountry || ""}
+            onValueChange={onCountryChange}
+            disabled={isCountryDisabled}
+          >
+            <SelectTrigger className="w-[180px] border-emerald-200 focus:ring-emerald-500 bg-white">
+              <SelectValue placeholder="Select country" />
+            </SelectTrigger>
+            <SelectContent>
+              {availableCountries.map((country) => (
+                <SelectItem key={country} value={country}>
+                  {country}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        {/* City Selector */}
+        <div className={`flex items-center gap-2 transition-opacity duration-200 ${isCityDisabled ? 'opacity-50' : 'opacity-100'}`}>
+          <Building2 className="w-5 h-5 text-emerald-600" />
+          <Select
+            value={selectedCity || ""}
+            onValueChange={onCityChange}
+            disabled={isCityDisabled}
+          >
+            <SelectTrigger className="w-[180px] border-emerald-200 focus:ring-emerald-500 bg-white">
+              <SelectValue placeholder="Select city" />
+            </SelectTrigger>
+            <SelectContent>
+              {availableCities.map((city) => (
+                <SelectItem key={city} value={city}>
+                  {city}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
       </div>
     );
   }
