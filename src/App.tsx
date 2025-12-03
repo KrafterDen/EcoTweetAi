@@ -26,6 +26,7 @@ import ecoProblemsData from "./data/EcoProblems.json";
 import { ActivistResources } from "./components/ActivistResources";
 import { EcoProblem, EcoProblemRecord, RegionValue } from "./types";
 import { regionToContinentMap } from "./data/regions";
+import { deriveHighlights } from "./utils/highlights";
 
 const formatPopulation = (value: number) => {
   if (value >= 1_000_000_000) {
@@ -80,6 +81,7 @@ export default function App() {
   const [highlightTakeAction, setHighlightTakeAction] = useState(false);
   const [view, setView] = useState<AppView>(() => getInitialView());
   const [reportProblemOpen, setReportProblemOpen] = useState(false);
+  const highlights = deriveHighlights(allEcoProblems);
   
   const regionSelectorRef = useRef<HTMLDivElement>(null);
   const problemsGridRef = useRef<HTMLDivElement>(null);
@@ -290,22 +292,22 @@ export default function App() {
                 <AlertTriangle className="w-4 h-4 text-amber-500" />
               </div>
               <h3 className="font-semibold text-gray-900 leading-tight mb-1">
-                Urban Smog Crisis
+                {highlights.problem.title}
               </h3>
               <div className="flex items-center text-xs text-gray-500 mb-3 space-x-2">
                 <div className="flex items-center">
                   <MapPin className="w-3 h-3 mr-0.5" />
-                  Kyiv, UA
+                  {highlights.problem.location}
                 </div>
                 <span className="w-1 h-1 bg-gray-300 rounded-full"></span>
-                <div className="text-amber-600 font-medium">92% Urgency</div>
+                <div className="text-amber-600 font-medium">{highlights.problem.urgency}% Urgency</div>
               </div>
             </div>
             <div className="pt-3 border-t border-gray-100 flex items-center text-xs text-gray-500">
               <span className="bg-gray-100 p-1 rounded-full mr-2">
                  <User className="w-3 h-3 text-gray-600"/>
               </span>
-              Suggested by <span className="font-medium text-gray-900 ml-1">@alex_ua</span>
+              Suggested by <span className="font-medium text-gray-900 ml-1">{highlights.problem.suggestedBy}</span>
             </div>
           </div>
 
@@ -319,20 +321,20 @@ export default function App() {
                 <Lightbulb className="w-4 h-4 text-blue-500" />
               </div>
               <h3 className="font-semibold text-gray-900 leading-tight mb-1">
-                Bio-Moss Filtration
+                {highlights.solution.title}
               </h3>
               <p className="text-xs text-gray-500 line-clamp-2 mb-2">
-                Vertical moss walls that absorb dust & toxins equal to 200 trees.
+                {highlights.solution.snippet}
               </p>
               <div className="text-[10px] text-gray-400">
-                Fix for: <span className="text-gray-600">Urban Smog Crisis</span>
+                Fix for: <span className="text-gray-600">{highlights.solution.problemTitle}</span>
               </div>
             </div>
             <div className="pt-3 border-t border-gray-100 flex items-center text-xs text-gray-500 mt-2">
               <span className="bg-gray-100 p-1 rounded-full mr-2">
                  <User className="w-3 h-3 text-gray-600"/>
               </span>
-              Proposed by <span className="font-medium text-gray-900 ml-1">@maria_eco</span>
+              Proposed by <span className="font-medium text-gray-900 ml-1">{highlights.solution.author}</span>
             </div>
           </div>
 
@@ -347,24 +349,24 @@ export default function App() {
               </div>
               <div className="flex items-center space-x-3 mb-3">
                  <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center text-purple-700 font-bold border-2 border-white shadow-sm">
-                   T22
+                   {highlights.hero.initials}
                  </div>
                  <div>
-                    <h3 className="font-bold text-gray-900">@taras_22</h3>
+                    <h3 className="font-bold text-gray-900">{highlights.hero.handle}</h3>
                     <div className="text-xs text-gray-500">Most active contributor</div>
                  </div>
               </div>
               <div className="grid grid-cols-3 gap-1 text-center">
                   <div className="bg-white rounded border border-gray-100 py-1">
-                      <div className="text-xs font-bold text-gray-800">12</div>
+                      <div className="text-xs font-bold text-gray-800">{highlights.hero.issues}</div>
                       <div className="text-xs text-gray-400">Issues</div>
                   </div>
                   <div className="bg-white rounded border border-gray-100 py-1">
-                      <div className="text-xs font-bold text-gray-800">7</div>
+                      <div className="text-xs font-bold text-gray-800">{highlights.hero.solutions}</div>
                       <div className="text-xs text-gray-400">Sols</div>
                   </div>
                   <div className="bg-white rounded border border-gray-100 py-1">
-                      <div className="text-xs font-bold text-gray-800">54</div>
+                      <div className="text-xs font-bold text-gray-800">{highlights.hero.votes}</div>
                       <div className="text-xs text-gray-400">Votes</div>
                   </div>
               </div>
@@ -383,15 +385,15 @@ export default function App() {
               <div className="space-y-1.5 mb-3">
                  <div className="flex items-center justify-between text-sm">
                     <span className="text-emerald-100">New Problems</span>
-                    <span className="font-bold">+32</span>
+                    <span className="font-bold">+{highlights.impact.problems}</span>
                  </div>
                  <div className="flex items-center justify-between text-sm">
                     <span className="text-emerald-100">New Solutions</span>
-                    <span className="font-bold">+18</span>
+                    <span className="font-bold">+{highlights.impact.solutions}</span>
                  </div>
                  <div className="flex items-center justify-between text-sm">
                     <span className="text-emerald-100">Votes Cast</span>
-                    <span className="font-bold">240</span>
+                    <span className="font-bold">{highlights.impact.votes}</span>
                  </div>
               </div>
             </div>

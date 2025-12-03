@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
 import { ArrowLeft, ChevronUp, ChevronDown, Send, Users, Clock, AlertTriangle } from "lucide-react";
-import { addSolutionRecord, getSolutionsByProblem } from "../utils/solutionsStorage";
+import { addSolutionRecord, getSolutionsByProblem, updateSolutionVotes } from "../utils/solutionsStorage";
 import type { Solution, SolutionRecord } from "../types";
 
 interface ProblemSolutionPageProps {
@@ -64,8 +64,12 @@ export function ProblemSolutionPage({
   };
 
   const handleVote = (solutionId: string, direction: 'up' | 'down') => {
-    setSolutions((prevSolutions) => prevSolutions.map(solution => {
-      if (solution.id === solutionId) {
+    setSolutions((prevSolutions) => {
+      const updatedSolutions = prevSolutions.map((solution) => {
+        if (solution.id !== solutionId) {
+          return solution;
+        }
+
         const currentlyUpvoted = solution.upvoted;
         const currentlyDownvoted = solution.downvoted;
         
@@ -95,15 +99,19 @@ export function ProblemSolutionPage({
           }
         }
 
+        // Persist the new vote count
+        updateSolutionVotes(solutionId, newVotes);
+
         return {
           ...solution,
           votes: newVotes,
           upvoted: newUpvoted,
           downvoted: newDownvoted,
         };
-      }
-      return solution;
-    }));
+      });
+
+      return updatedSolutions;
+    });
   };
 
   const handleSubmit = () => {

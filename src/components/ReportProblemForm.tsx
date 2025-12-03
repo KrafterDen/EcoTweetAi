@@ -94,7 +94,7 @@ export function ReportProblemForm() {
           />
         </div>
 
-        {/* Локализация (Хардкод пока) */}
+        {/* Локализация */}
         <div className="space-y-2">
           <Label htmlFor="location">Location (Coordinates)</Label>
           <div className="relative">
@@ -103,12 +103,13 @@ export function ReportProblemForm() {
               id="location"
               name="location"
               value={formData.location}
-              readOnly
-              className="pl-9 bg-slate-50 text-slate-500 cursor-not-allowed"
+              onChange={handleChange}
+              className="pl-9 bg-white"
+              placeholder="e.g., 48.3794° N, 31.1656° E or City, Country"
             />
           </div>
           <p className="text-xs text-slate-400">
-            * Automatic geolocation is currently disabled.
+            * Enter coordinates or a city/region; automatic geolocation is currently disabled.
           </p>
         </div>
 

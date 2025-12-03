@@ -90,3 +90,11 @@ export const addSolutionRecord = (record: SolutionRecord) => {
   persistSolutions(updated);
   return updated;
 };
+
+export const updateSolutionVotes = (solutionId: string, votes: number) => {
+  const updated = getAllSolutions().map((solution) =>
+    solution.id === solutionId ? { ...solution, votes } : solution
+  );
+  persistSolutions(updated);
+  return updated;
+};

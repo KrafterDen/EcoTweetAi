@@ -72,7 +72,7 @@ export function Header({
               onClick={onReportProblem}
             >
               <AlertTriangle className="mr-2 h-4 w-4" />
-              Report problem
+              Report EcoProblem
             </Button>
           </div>
 
