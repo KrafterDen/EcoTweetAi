@@ -5,8 +5,10 @@ import { Label } from "./ui/label";
 import { Textarea } from "./ui/textarea";
 import { Checkbox } from "./ui/checkbox";
 import { Leaf } from "lucide-react";
+import { useI18n } from "../i18n";
 
 export function RegistrationForm() {
+  const { t } = useI18n();
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -37,15 +39,15 @@ export function RegistrationForm() {
       </div>
 
       <h2 className="text-center text-emerald-900 mb-2">
-        Content Moderator Application
+        {t("registration.title", "Content Moderator Application")}
       </h2>
       <p className="text-center text-slate-600 mb-6">
-        Join our team of volunteer moderators
+        {t("registration.subtitle", "Join our team of volunteer moderators")}
       </p>
 
       <form onSubmit={handleSubmit} className="space-y-5">
         <div className="space-y-2">
-          <Label htmlFor="fullName">Full Name *</Label>
+          <Label htmlFor="fullName">{t("registration.fullName", "Full Name *")}</Label>
           <Input
             id="fullName"
             name="fullName"
@@ -57,7 +59,7 @@ export function RegistrationForm() {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="email">Email Address *</Label>
+          <Label htmlFor="email">{t("registration.email", "Email Address *")}</Label>
           <Input
             id="email"
             name="email"
@@ -70,7 +72,7 @@ export function RegistrationForm() {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="phone">Phone Number</Label>
+          <Label htmlFor="phone">{t("registration.phone", "Phone Number")}</Label>
           <Input
             id="phone"
             name="phone"
@@ -82,7 +84,7 @@ export function RegistrationForm() {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="experience">Prior Moderation Experience</Label>
+          <Label htmlFor="experience">{t("registration.experience", "Prior Moderation Experience")}</Label>
           <Input
             id="experience"
             name="experience"
@@ -94,7 +96,7 @@ export function RegistrationForm() {
 
         <div className="space-y-2">
           <Label htmlFor="motivation">
-            Why do you want to be a moderator? *
+            {t("registration.motivation", "Why do you want to be a moderator? *")}
           </Label>
           <Textarea
             id="motivation"
@@ -109,7 +111,7 @@ export function RegistrationForm() {
 
         <div className="space-y-2">
           <Label htmlFor="availability">
-            Weekly Availability (hours) *
+            {t("registration.availability", "Weekly Availability (hours) *")}
           </Label>
           <Input
             id="availability"
@@ -136,7 +138,7 @@ export function RegistrationForm() {
             htmlFor="agreeToTerms"
             className="cursor-pointer leading-tight"
           >
-            I agree to the terms and conditions and community guidelines *
+            {t("registration.agree", "I agree to the terms and conditions and community guidelines *")}
           </Label>
         </div>
 
@@ -145,10 +147,9 @@ export function RegistrationForm() {
           className="w-full bg-emerald-600 hover:bg-emerald-700"
           disabled={!formData.agreeToTerms}
         >
-          Submit Application
+          {t("registration.submit", "Submit Application")}
         </Button>
       </form>
     </div>
   );
 }
-

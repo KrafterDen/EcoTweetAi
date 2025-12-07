@@ -9,6 +9,7 @@ import type {
   ActivistProfilesFile,
   HandleConfidence,
 } from "../types";
+import { useI18n } from "../i18n";
 
 type ContinentFilter = string | "ALL";
 
@@ -49,6 +50,7 @@ const getInitials = (value: string) => {
 };
 
 export function ActivistResources() {
+  const { t } = useI18n();
   const [continentFilter, setContinentFilter] = useState<ContinentFilter>("ALL");
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -82,7 +84,7 @@ export function ActivistResources() {
             type="search"
             value={searchTerm}
             onChange={(event) => setSearchTerm(event.target.value)}
-            placeholder="Search by name or handle"
+            placeholder={t("activists.search", "Search by name or handle")}
             className="w-full rounded-xl border border-emerald-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
           />
         </label>
@@ -95,7 +97,7 @@ export function ActivistResources() {
             }`}
             onClick={() => setContinentFilter("ALL")}
           >
-            All Regions
+            {t("activists.all", "All Regions")}
           </button>
           {uniqueContinents.map((continent) => (
             <button
@@ -191,10 +193,10 @@ export function ActivistResources() {
       {filteredActivists.length === 0 && (
         <div className="text-center py-12 border border-dashed border-emerald-200 rounded-2xl mt-8">
           <p className="text-lg font-medium text-emerald-900">
-            No activists match your filters yet
+            {t("activists.emptyTitle", "No activists match your filters yet")}
           </p>
           <p className="text-sm text-gray-500 mt-2">
-            Try selecting a different region or clearing the search field.
+            {t("activists.emptySub", "Try selecting a different region or clearing the search field.")}
           </p>
         </div>
       )}

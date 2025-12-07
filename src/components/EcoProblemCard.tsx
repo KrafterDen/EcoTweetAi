@@ -3,6 +3,7 @@ import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
 import { Progress } from "./ui/progress";
 import { AlertTriangle, ArrowRight } from "lucide-react";
+import { useI18n } from "../i18n";
 
 interface EcoProblemCardProps {
   title: string;
@@ -25,6 +26,7 @@ export function EcoProblemCard({
   tags,
   onTakeAction
 }: EcoProblemCardProps) {
+  const { t } = useI18n();
   const getUrgencyColor = (level: number) => {
     if (level >= 90) return "text-red-600";
     if (level >= 70) return "text-orange-600";
@@ -53,7 +55,7 @@ export function EcoProblemCard({
 
         <div className="space-y-2">
           <div className="flex justify-between items-center">
-            <span className="text-sm text-gray-500">Urgency Level</span>
+            <span className="text-sm text-gray-500">{t("card.urgency", "Urgency Level")}</span>
             <span className={`${getUrgencyColor(urgencyLevel)}`}>{urgencyLevel}%</span>
           </div>
           <Progress value={urgencyLevel} className="h-2" />
@@ -61,11 +63,11 @@ export function EcoProblemCard({
 
         <div className="grid grid-cols-2 gap-4 pt-2">
           <div>
-            <p className="text-xs text-gray-500">Affected Population</p>
+            <p className="text-xs text-gray-500">{t("card.population", "Affected Population")}</p>
             <p className="text-sm">{impactedPopulation}</p>
           </div>
           <div>
-            <p className="text-xs text-gray-500">Critical Timeframe</p>
+            <p className="text-xs text-gray-500">{t("card.timeframe", "Critical Timeframe")}</p>
             <p className="text-sm">{timeframe}</p>
           </div>
         </div>
@@ -82,7 +84,7 @@ export function EcoProblemCard({
           onClick={onTakeAction}
           className="w-full mt-4 bg-emerald-600 hover:bg-emerald-700 text-white"
         >
-          Take Action!
+          {t("card.takeAction", "Take Action!")}
           <ArrowRight className="ml-2 w-4 h-4" />
         </Button>
       </div>

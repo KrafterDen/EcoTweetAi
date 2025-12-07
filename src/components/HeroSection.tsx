@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef, useMemo } from 'react';
 import Globe from 'react-globe.gl';
 import { ArrowRight, Leaf } from 'lucide-react';
+import { useI18n } from '../i18n';
 
 // --- ТИПИ ПРОПСІВ (Синхронізовано з App.tsx) ---
 interface HeroSectionProps {
@@ -87,6 +88,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   onSavePlanetClick,
   onTakeActionClick
 }) => {
+  const { t } = useI18n();
   const globeEl = useRef<any>();
   const [countries, setCountries] = useState({ features: [] });
   const [solutions, setSolutions] = useState<any[]>([]);
@@ -220,16 +222,15 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
         <div className="pointer-events-auto">
             <div className="inline-flex items-center text-[#ff6b6b] font-bold text-xs md:text-sm tracking-wider mb-4 uppercase bg-[#ff6b6b]/10 px-3 py-1 rounded-full border border-[#ff6b6b]/20">
               <span className="flex items-center justify-center w-4 h-4 bg-[#ff6b6b] text-[#013220] rounded-full mr-2 text-[10px] font-bold">!</span>
-              Critical Issues Detected
+              {t("hero.badge", "Critical Issues Detected")}
             </div>
             
             <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight text-white drop-shadow-lg">
-              The place where <br className="hidden md:block"/> problems are solved
+              {t("hero.title1", "The place where")} <br className="hidden md:block"/> {t("hero.title2", "problems are solved")} <br className="hidden md:block"/> {t("hero.title3", "")}
             </h1>
             
             <p className="text-base md:text-lg text-[#e0e0e0] leading-relaxed mb-8 md:mb-10 font-light max-w-lg mx-auto md:mx-0">
-              EcoTweetAI connects people for solving enviromental problems. <br className="hidden md:block"/>
-              Watch the world unite in real-time.
+              {t("hero.subtitle", "EcoTweetAI connects people for solving environmental problems. Watch the world unite in real-time.")}
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
@@ -237,7 +238,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                 onClick={onTakeActionClick}
                 className={`px-8 py-3.5 bg-white text-[#013220] font-bold rounded-lg text-base transition-all hover:-translate-y-1 hover:shadow-[0_0_20px_rgba(255,255,255,0.3)] flex items-center justify-center ${highlightTakeAction ? 'ring-4 ring-emerald-400 shadow-[0_0_30px_#00ff88]' : ''}`}
               >
-                Take Action <ArrowRight className="ml-2 w-5 h-5" />
+                {t("hero.cta.primary", "Take Action")} <ArrowRight className="ml-2 w-5 h-5" />
               </button>
 
               <button 
@@ -245,7 +246,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                 className="px-8 py-3.5 border border-emerald-500/50 text-emerald-100 font-semibold rounded-lg text-base hover:bg-emerald-900/30 hover:border-emerald-400 transition-all flex items-center justify-center backdrop-blur-sm"
               >
                 <Leaf className="mr-2 w-5 h-5" />
-                Save Planet
+                {t("hero.cta.secondary", "Save Planet")}
               </button>
             </div>
         </div>

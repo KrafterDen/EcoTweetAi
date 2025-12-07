@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Button } from "./ui/button";
 import { Menu, X, TrendingUp, Users, BookOpen, AlertTriangle } from "lucide-react";
+import { useI18n } from "../i18n";
 
 interface HeaderProps {
   onNavigateToResources?: () => void;
@@ -13,20 +14,21 @@ export function Header({
   onNavigateToInvolved,
   onReportProblem,
 }: HeaderProps) {
+  const { t, locale, setLocale } = useI18n();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navLinks = [
-    { name: "Issues", href: "#issues", icon: TrendingUp },
-    { name: "Resources", href: "#resources", icon: BookOpen },
-    { name: "Get Involved", href: "#involved", icon: Users },
+    { name: t("nav.issues", "Issues"), href: "#issues", icon: TrendingUp },
+    { name: t("nav.resources", "Resources"), href: "#resources", icon: BookOpen },
+    { name: t("nav.involved", "Get Involved"), href: "#involved", icon: Users },
   ];
 
   return (
     <nav className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-emerald-100 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          {/* Logo/Brand */}
-          <div className="flex items-center gap-3">
+          {/* Logo/Brand + Locale */}
+          <div className="flex items-center gap-4">
             <img
               src="/logo.png"
               alt="EcoTweetAI logo"
@@ -36,6 +38,15 @@ export function Header({
               <span className="text-emerald-900 tracking-tight">EcoTweetAI</span>
               <span className="text-xs text-emerald-600 -mt-1">Crowd platform</span>
             </div>
+            <select
+              value={locale}
+              onChange={(e) => setLocale(e.target.value as "uk" | "en")}
+              className="rounded-md border border-emerald-200 bg-white px-2 py-1 text-xs text-emerald-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              aria-label="Select language"
+            >
+              <option value="uk">UA</option>
+              <option value="en">EN</option>
+            </select>
           </div>
 
           {/* Desktop Navigation */}
@@ -72,7 +83,7 @@ export function Header({
               onClick={onReportProblem}
             >
               <AlertTriangle className="mr-2 h-4 w-4" />
-              Report EcoProblem
+              {t("nav.report", "Report problem")}
             </Button>
           </div>
 
@@ -126,8 +137,19 @@ export function Header({
                 }}
               >
                 <AlertTriangle className="mr-2 h-4 w-4" />
-                Suggest a problem
+                {t("nav.reportMobile", "Suggest a problem")}
               </Button>
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-gray-600">UA</span>
+                <input
+                  type="checkbox"
+                  checked={locale === "en"}
+                  onChange={(e) => setLocale(e.target.checked ? "en" : "uk")}
+                  aria-label="Toggle language"
+                  className="cursor-pointer"
+                />
+                <span className="text-xs text-gray-600">EN</span>
+              </div>
             </div>
           </div>
         )}

@@ -8,9 +8,9 @@ interface TutorialTooltipProps {
 export function TutorialTooltip({ step, onClose }: TutorialTooltipProps) {
   if (step === 0) return null;
 
-  const messages = {
-    1: "👋 Welcome! First, select your region to see environmental issues most relevant to your area.",
-    2: "✅ Great! Now scroll down to explore the critical environmental issues and learn how you can take action."
+const messages = {
+    1: "👋 Ласкаво просимо! Спершу оберіть свій регіон, щоб побачити найактуальніші екологічні проблеми для вашої місцевості.",
+    2: "✅ Чудово! Тепер прокрутіть униз, щоб дослідити критичні екологічні питання та дізнатися, як ви можете діяти."
   };
 
   const message = messages[step as keyof typeof messages];

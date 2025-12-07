@@ -30,6 +30,7 @@ import { deriveHighlights } from "./utils/highlights";
 import { getCustomProblems, addCustomProblem } from "./utils/customProblemsStorage";
 import type { ReportProblemPayload } from "./types";
 import { fetchProblems, createProblem, uploadAttachment } from "./utils/api";
+import { useI18n } from "./i18n";
 
 const formatPopulation = (value: number) => {
   if (value >= 1_000_000_000) {
@@ -73,6 +74,7 @@ const getInitialView = (): AppView => {
 };
 
 export default function App() {
+  const { t } = useI18n();
   const [selectedProblem, setSelectedProblem] = useState<EcoProblem | null>(null);
   const [problems, setProblems] = useState<EcoProblem[]>([]);
   
@@ -357,7 +359,7 @@ export default function App() {
             <div>
               <div className="flex items-center justify-between mb-2">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-100">
-                  Problem of the Week
+                  {t("highlights.problem", "Problem of the Week")}
                 </span>
                 <AlertTriangle className="w-4 h-4 text-amber-500" />
               </div>
@@ -386,7 +388,7 @@ export default function App() {
             <div>
               <div className="flex items-center justify-between mb-2">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full border border-blue-100">
-                  Solution of the Week
+                  {t("highlights.solution", "Solution of the Week")}
                 </span>
                 <Lightbulb className="w-4 h-4 text-blue-500" />
               </div>
@@ -413,7 +415,7 @@ export default function App() {
             <div>
               <div className="flex items-center justify-between mb-3">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-purple-600 bg-purple-50 px-2 py-0.5 rounded-full border border-purple-100">
-                  Eco-Hero
+                  {t("highlights.hero", "Eco-Hero")}
                 </span>
                 <Trophy className="w-4 h-4 text-purple-500" />
               </div>
@@ -448,21 +450,21 @@ export default function App() {
             <div>
               <div className="flex items-center justify-between mb-2">
                 <h3 className="font-semibold text-emerald-50 leading-tight">
-                  Community Impact
+                  {t("highlights.impact", "Community Impact")}
                 </h3>
                 <Activity className="w-4 h-4 text-emerald-200" />
               </div>
               <div className="space-y-1.5 mb-3">
                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-emerald-100">New Problems</span>
+                    <span className="text-emerald-100">{t("highlights.newProblems", "New Problems")}</span>
                     <span className="font-bold">+{highlights.impact.problems}</span>
                  </div>
                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-emerald-100">New Solutions</span>
+                    <span className="text-emerald-100">{t("highlights.newSolutions", "New Solutions")}</span>
                     <span className="font-bold">+{highlights.impact.solutions}</span>
                  </div>
                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-emerald-100">Votes Cast</span>
+                    <span className="text-emerald-100">{t("highlights.votesCast", "Votes Cast")}</span>
                     <span className="font-bold">{highlights.impact.votes}</span>
                  </div>
               </div>
@@ -496,11 +498,10 @@ export default function App() {
           />
           
           <h2 className="mb-4 mt-6">
-            Priority Environmental Issues
+            {t("section.title", "Priority Environmental Issues")}
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            These interconnected ecological crises require urgent global cooperation and action. 
-            Each problem compounds the others, creating a critical need for comprehensive solutions.
+            {t("section.subtitle", "These interconnected ecological crises require urgent global cooperation and action. Each problem compounds the others, creating a critical need for comprehensive solutions.")}
           </p>
         </div>
 
@@ -509,8 +510,8 @@ export default function App() {
           {filteredProblems.length === 0 ? (
             <div className="col-span-full text-center bg-white border border-dashed border-emerald-200 rounded-2xl p-10 shadow-sm">
               <Globe className="w-12 h-12 mx-auto text-emerald-500 mb-4" />
-              <h3 className="text-lg font-semibold text-emerald-900">No data for this localization yet</h3>
-              <p className="text-gray-600 mt-2">Try selecting a different region to explore more ecological challenges.</p>
+              <h3 className="text-lg font-semibold text-emerald-900">{t("empty.title", "No data for this localization yet")}</h3>
+              <p className="text-gray-600 mt-2">{t("empty.subtitle", "Try selecting a different region to explore more ecological challenges.")}</p>
             </div>
           ) : (
             filteredProblems.map((problem) => (
@@ -523,11 +524,10 @@ export default function App() {
         <div className="bg-gradient-to-r from-emerald-600 to-teal-600 rounded-2xl p-8 md:p-12 text-white text-center">
           <Leaf className="w-12 h-12 mx-auto mb-4" />
           <h2 className="text-white mb-4">
-            Every Action Counts
+            {t("cta.title", "Every Action Counts")}
           </h2>
           <p className="text-xl text-emerald-50 mb-8 max-w-2xl mx-auto">
-            While these challenges are daunting, collective action and individual choices can make a difference. 
-            Stay informed, reduce your environmental impact, and support sustainable initiatives.
+            {t("cta.subtitle", "While these challenges are daunting, collective action and individual choices can make a difference. Stay informed, reduce your environmental impact, and support sustainable initiatives.")}
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <Button
@@ -535,10 +535,10 @@ export default function App() {
               className="bg-white text-emerald-900 hover:bg-emerald-50"
               onClick={() => navigateTo("involved")}
             >
-              Get Involved
+              {t("cta.primary", "Get Involved")}
             </Button>
             <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/10">
-              Share This Information
+              {t("cta.secondary", "Share This Information")}
             </Button>
           </div>
         </div>

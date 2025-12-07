@@ -13,22 +13,24 @@ import {
 } from "./ui/select";
 import { regions, countriesByRegion, citiesByCountry } from "../data/regions";
 import type { RegionValue, ReportProblemPayload } from "../types";
+import { useI18n } from "../i18n";
 
-// Список тегов, который ты просил
-const AVAILABLE_TAGS = ["Flood", "Coastal", "Critical", "Air", "Health", "Urban"];
+// Теги українською
+const AVAILABLE_TAGS = ["Повінь", "Прибережна", "Критична", "Повітря", "Здоров'я", "Міська"];
 
 interface ReportProblemFormProps {
   onSubmit?: (payload: ReportProblemPayload) => void;
 }
 
 export function ReportProblemForm({ onSubmit }: ReportProblemFormProps) {
+  const { t } = useI18n();
   const [formData, setFormData] = useState({
     title: "",
     description: "",
     affectedPopulation: "",
     urgency: 50, // Слайдер от 0 до 100
     tags: [] as string[],
-    timeframe: "next 5 years",
+    timeframe: "next_5_years",
     imageUrl: "",
   });
   const [selectedRegion, setSelectedRegion] = useState<RegionValue>("GLOBAL");
@@ -115,26 +117,26 @@ export function ReportProblemForm({ onSubmit }: ReportProblemFormProps) {
       {/* Заголовок с красным акцентом */}
       <div className="flex items-center justify-center gap-2 mb-6">
         <AlertTriangle className="size-8 text-rose-600" />
-        <h1 className="text-xl font-bold text-slate-800">Report an Issue</h1>
+        <h1 className="text-xl font-bold text-slate-800">{t("report.title", "Report an Issue")}</h1>
       </div>
 
       <h2 className="text-center text-slate-900 mb-2 font-semibold">
-        Environmental Alert
+        {t("report.subtitle", "Environmental Alert")}
       </h2>
       <p className="text-center text-slate-500 mb-6 text-sm">
-        Help us identify and track ecological threats.
+        {t("report.lead", "Help us identify and track ecological threats.")}
       </p>
 
       <form onSubmit={handleSubmit} className="space-y-5">
         {/* Название проблемы */}
         <div className="space-y-2">
-          <Label htmlFor="title">Problem Title *</Label>
+          <Label htmlFor="title">{t("report.problemTitle", "Problem Title *")}</Label>
           <Input
             id="title"
             name="title"
             value={formData.title}
             onChange={handleChange}
-            placeholder="e.g., River Pollution near Factory"
+            placeholder={t("report.titlePh", "e.g., River Pollution near Factory")}
             required
             className="focus-visible:ring-rose-500"
           />
@@ -142,13 +144,13 @@ export function ReportProblemForm({ onSubmit }: ReportProblemFormProps) {
 
         {/* Описание проблемы */}
         <div className="space-y-2">
-          <Label htmlFor="description">Description *</Label>
+          <Label htmlFor="description">{t("report.description", "Description *")}</Label>
           <Textarea
             id="description"
             name="description"
             value={formData.description}
             onChange={handleChange}
-            placeholder="Describe the issue in detail..."
+            placeholder={t("report.descriptionPh", "Describe the issue in detail...")}
             rows={3}
             required
             className="focus-visible:ring-rose-500"
@@ -157,7 +159,7 @@ export function ReportProblemForm({ onSubmit }: ReportProblemFormProps) {
 
         {/* Изображение */}
         <div className="space-y-2">
-          <Label htmlFor="imageUrl">Image (URL or file)</Label>
+          <Label htmlFor="imageUrl">{t("report.image", "Image (URL or file)")}</Label>
           <Input
             id="imageUrl"
             name="imageUrl"
@@ -180,13 +182,13 @@ export function ReportProblemForm({ onSubmit }: ReportProblemFormProps) {
             />
           </div>
           <p className="text-xs text-slate-500">
-            Prefer a hosted URL; files will be uploaded to the server and referenced by URL (no base64).
+            {t("report.imageHint", "Prefer a hosted URL; files will be uploaded to the server and referenced by URL (no base64).")}
           </p>
         </div>
 
         {/* Локализация */}
         <div className="space-y-2">
-          <Label>Location</Label>
+          <Label>{t("report.location", "Location")}</Label>
           <div className="flex flex-col gap-3">
             <div className="flex items-center gap-2">
               <MapPin className="h-4 w-4 text-slate-500" />
@@ -199,7 +201,7 @@ export function ReportProblemForm({ onSubmit }: ReportProblemFormProps) {
                 }}
               >
                 <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select region" />
+                  <SelectValue placeholder={t("report.regionPh", "Select region")} />
                 </SelectTrigger>
                 <SelectContent>
                   {regions.map((region) => (
@@ -219,7 +221,7 @@ export function ReportProblemForm({ onSubmit }: ReportProblemFormProps) {
               disabled={availableCountries.length === 0}
             >
               <SelectTrigger className="w-full">
-                <SelectValue placeholder="Select country" />
+                <SelectValue placeholder={t("report.countryPh", "Select country")} />
               </SelectTrigger>
               <SelectContent>
                 {availableCountries.map((country) => (
@@ -235,7 +237,7 @@ export function ReportProblemForm({ onSubmit }: ReportProblemFormProps) {
               disabled={availableCities.length === 0}
             >
               <SelectTrigger className="w-full">
-                <SelectValue placeholder="Select city" />
+                <SelectValue placeholder={t("report.cityPh", "Select city")} />
               </SelectTrigger>
               <SelectContent>
                 {availableCities.map((city) => (
@@ -246,31 +248,31 @@ export function ReportProblemForm({ onSubmit }: ReportProblemFormProps) {
               </SelectContent>
             </Select>
             <p className="text-xs text-slate-500">
-              Selected: {locationSummary || "No location selected"}
+              {t("report.selected", "Selected")}: {locationSummary || t("report.noLocation", "No location selected")}
             </p>
           </div>
           <p className="text-xs text-slate-400">
-            * Select region and (optionally) country/city to localize the issue.
+            {t("report.locationHint", "* Select region and (optionally) country/city to localize the issue.")}
           </p>
         </div>
 
         {/* Affected Population & Timeframe (в одну строку для компактности) */}
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="affectedPopulation">Affected People</Label>
+          <Label htmlFor="affectedPopulation">{t("report.affected", "Affected People")}</Label>
             <Input
               id="affectedPopulation"
               name="affectedPopulation"
               type="number"
               value={formData.affectedPopulation}
               onChange={handleChange}
-              placeholder="Est. number"
+              placeholder={t("report.affectedPh", "Est. number")}
               className="focus-visible:ring-rose-500"
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="timeframe">Critical Timeframe</Label>
+          <Label htmlFor="timeframe">{t("report.timeframe", "Critical Timeframe")}</Label>
             <select
               id="timeframe"
               name="timeframe"
@@ -278,9 +280,10 @@ export function ReportProblemForm({ onSubmit }: ReportProblemFormProps) {
               onChange={handleChange}
               className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
             >
-              <option value="next 5 years">Next 5 years</option>
-              <option value="next 10 years">Next 10 years</option>
-              <option value="next 20 years">Next 20 years</option>
+              <option value="next_5_years">{t("timeframe.5", "Next 5 years")}</option>
+              <option value="next_10_years">{t("timeframe.10", "Next 10 years")}</option>
+              <option value="next_15_years">{t("timeframe.15", "Next 15 years")}</option>
+              <option value="next_20_years">{t("timeframe.20", "Next 20 years")}</option>
             </select>
           </div>
         </div>
@@ -288,9 +291,9 @@ export function ReportProblemForm({ onSubmit }: ReportProblemFormProps) {
         {/* Urgency Level Slider */}
         <div className="space-y-3 p-4 bg-rose-50 rounded-lg border border-rose-100">
           <div className="flex justify-between items-center">
-            <Label htmlFor="urgency" className="text-rose-900 font-semibold">
-              Urgency Level
-            </Label>
+          <Label htmlFor="urgency" className="text-rose-900 font-semibold">
+            {t("report.urgency", "Urgency Level")}
+          </Label>
             <span className="text-sm font-bold text-rose-600">
               {formData.urgency}%
             </span>
@@ -305,14 +308,14 @@ export function ReportProblemForm({ onSubmit }: ReportProblemFormProps) {
             className="w-full h-2 bg-rose-200 rounded-lg appearance-none cursor-pointer accent-rose-600"
           />
           <div className="flex justify-between text-xs text-rose-400 px-1">
-            <span>Low</span>
-            <span>Critical</span>
+            <span>{t("report.low", "Low")}</span>
+            <span>{t("report.critical", "Critical")}</span>
           </div>
         </div>
 
         {/* Tags Selection */}
         <div className="space-y-2">
-          <Label>Tags</Label>
+          <Label>{t("report.tags", "Tags")}</Label>
           <div className="flex flex-wrap gap-2">
             {AVAILABLE_TAGS.map((tag) => {
               const isSelected = formData.tags.includes(tag);
@@ -339,7 +342,7 @@ export function ReportProblemForm({ onSubmit }: ReportProblemFormProps) {
           type="submit"
           className="w-full bg-rose-600 hover:bg-rose-700 text-white shadow-lg shadow-rose-200 mt-4"
         >
-          Submit Report
+          {t("report.submit", "Submit Report")}
         </Button>
       </form>
     </div>

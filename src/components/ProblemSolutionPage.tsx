@@ -4,6 +4,7 @@ import { Badge } from "./ui/badge";
 import { ArrowLeft, ChevronUp, ChevronDown, Send, Users, Clock, AlertTriangle } from "lucide-react";
 import { addSolutionRecord, getSolutionsByProblem, updateSolutionVotes } from "../utils/solutionsStorage";
 import type { Solution, SolutionRecord } from "../types";
+import { useI18n } from "../i18n";
 
 interface ProblemSolutionPageProps {
   id: string;
@@ -49,6 +50,7 @@ export function ProblemSolutionPage({
   tags,
   onBack
 }: ProblemSolutionPageProps) {
+  const { t } = useI18n();
   const [inputValue, setInputValue] = useState("");
   const [solutions, setSolutions] = useState<Solution[]>([]);
 
@@ -160,7 +162,7 @@ export function ProblemSolutionPage({
             className="text-emerald-900 hover:text-emerald-700 hover:bg-emerald-50"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to All Issues
+            {t("solutions.back", "Back to All Issues")}
           </Button>
         </div>
       </div>
@@ -192,21 +194,21 @@ export function ProblemSolutionPage({
             <p className="text-gray-700">{description}</p>
 
             <div className="grid grid-cols-2 gap-4 pt-2">
-              <div className="flex items-center gap-2">
-                <Users className="w-4 h-4 text-emerald-600" />
-                <div>
-                  <p className="text-xs text-gray-500">Affected Population</p>
-                  <p className="text-sm">{impactedPopulation}</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <Clock className="w-4 h-4 text-emerald-600" />
-                <div>
-                  <p className="text-xs text-gray-500">Critical Timeframe</p>
-                  <p className="text-sm">{timeframe}</p>
-                </div>
+            <div className="flex items-center gap-2">
+              <Users className="w-4 h-4 text-emerald-600" />
+              <div>
+                <p className="text-xs text-gray-500">{t("card.population", "Affected Population")}</p>
+                <p className="text-sm">{impactedPopulation}</p>
               </div>
             </div>
+            <div className="flex items-center gap-2">
+              <Clock className="w-4 h-4 text-emerald-600" />
+              <div>
+                <p className="text-xs text-gray-500">{t("card.timeframe", "Critical Timeframe")}</p>
+                <p className="text-sm">{timeframe}</p>
+              </div>
+            </div>
+          </div>
 
             <div className="flex flex-wrap gap-2 pt-2">
               {tags.map((tag, index) => (
@@ -222,17 +224,17 @@ export function ProblemSolutionPage({
       {/* Solutions Thread */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 mt-8">
         <div className="mb-6">
-          <h2 className="text-emerald-900 mb-2">Community Solutions</h2>
+          <h2 className="text-emerald-900 mb-2">{t("solutions.community", "Community Solutions")}</h2>
           <p className="text-gray-600">
-            Share and discover actionable solutions from people around the world
+            {t("solutions.communitySub", "Share and discover actionable solutions from people around the world")}
           </p>
         </div>
 
         <div className="space-y-4">
           {solutions.length === 0 ? (
             <div className="bg-white border border-dashed border-emerald-200 rounded-xl p-8 text-center shadow-sm">
-              <p className="text-lg font-semibold text-emerald-900 mb-2">No shared solutions yet</p>
-              <p className="text-gray-600">Be the first to suggest an action plan for this challenge.</p>
+              <p className="text-lg font-semibold text-emerald-900 mb-2">{t("solutions.noneTitle", "No shared solutions yet")}</p>
+              <p className="text-gray-600">{t("solutions.noneSub", "Be the first to suggest an action plan for this challenge.")}</p>
             </div>
           ) : (
             solutions.map((solution) => (
@@ -296,7 +298,7 @@ export function ProblemSolutionPage({
                     handleSubmit();
                   }
                 }}
-                placeholder="Share your solution or idea to help solve this problem..."
+                placeholder={t("solutions.placeholder", "Share your solution or idea to help solve this problem...")}
                 className="w-full px-4 py-3 pr-12 rounded-2xl border border-emerald-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none resize-none bg-white transition-all"
                 rows={1}
                 style={{
@@ -314,7 +316,7 @@ export function ProblemSolutionPage({
             </Button>
           </div>
           <p className="text-xs text-gray-500 mt-2">
-            Press Enter to send, Shift + Enter for new line
+            {t("solutions.hint", "Press Enter to send, Shift + Enter for new line")}
           </p>
         </div>
       </div>
