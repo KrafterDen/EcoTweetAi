@@ -28,7 +28,8 @@ import { EcoProblem, EcoProblemRecord, RegionValue } from "./types";
 import { regionToContinentMap } from "./data/regions";
 import { deriveHighlights } from "./utils/highlights";
 import { getCustomProblems, addCustomProblem } from "./utils/customProblemsStorage";
-import type { ReportProblemPayload } from "./components/ReportProblemForm";
+import type { ReportProblemPayload } from "./types";
+import { fetchProblems, createProblem } from "./utils/api";
 
 const formatPopulation = (value: number) => {
   if (value >= 1_000_000_000) {
@@ -73,10 +74,7 @@ const getInitialView = (): AppView => {
 
 export default function App() {
   const [selectedProblem, setSelectedProblem] = useState<EcoProblem | null>(null);
-  const [problems, setProblems] = useState<EcoProblem[]>(() => [
-    ...allEcoProblems,
-    ...getCustomProblems(),
-  ]);
+  const [problems, setProblems] = useState<EcoProblem[]>([]);
   
   // Состояние для сложного селектора
   const [selectedRegion, setSelectedRegion] = useState<RegionValue>("GLOBAL");
@@ -87,10 +85,28 @@ export default function App() {
   const [highlightTakeAction, setHighlightTakeAction] = useState(false);
   const [view, setView] = useState<AppView>(() => getInitialView());
   const [reportProblemOpen, setReportProblemOpen] = useState(false);
-  const highlights = deriveHighlights(problems);
+  const highlights = deriveHighlights(problems.length ? problems : allEcoProblems);
   
   const regionSelectorRef = useRef<HTMLDivElement>(null);
   const problemsGridRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    let active = true;
+    const load = async () => {
+      try {
+        const apiProblems = await fetchProblems();
+        if (!active) return;
+        setProblems(apiProblems);
+      } catch {
+        if (!active) return;
+        setProblems([...allEcoProblems, ...getCustomProblems()]);
+      }
+    };
+    load();
+    return () => {
+      active = false;
+    };
+  }, []);
 
   useEffect(() => {
     if (tutorialStep === 1 && regionSelectorRef.current) {
@@ -176,31 +192,36 @@ export default function App() {
     next_20_years: "Next 20 years",
   };
 
-  const handleProblemSubmit = (payload: ReportProblemPayload) => {
+  const handleProblemSubmit = async (payload: ReportProblemPayload) => {
     const affected = payload.affectedPopulation ?? null;
     const continent =
       regionToContinentMap[payload.region] ?? "Global";
+    try {
+      const created = await createProblem(payload);
+      setProblems((prev) => [created, ...prev.filter((p) => p.id !== created.id)]);
+    } catch {
+      const newProblem: EcoProblem = {
+        id: `custom-${Date.now()}`,
+        continent: continent || "Global",
+        country: payload.country ?? null,
+        city: payload.city ?? null,
+        title: payload.title,
+        description: payload.description,
+        imageUrl:
+          payload.imageUrl ||
+          "https://images.pexels.com/photos/2409022/pexels-photo-2409022.jpeg",
+        urgencyLevel: payload.urgency,
+        impactedPopulation: affected ? formatPopulation(affected) : "Unknown",
+        timeframe: timeframeLabels[payload.timeframe] || payload.timeframe,
+        tags: payload.tags,
+        lastUpdated: new Date().toISOString(),
+      };
 
-    const newProblem: EcoProblem = {
-      id: `custom-${Date.now()}`,
-      continent: continent || "Global",
-      country: payload.country ?? null,
-      city: payload.city ?? null,
-      title: payload.title,
-      description: payload.description,
-      imageUrl:
-        payload.imageUrl ||
-        "https://images.pexels.com/photos/2409022/pexels-photo-2409022.jpeg",
-      urgencyLevel: payload.urgency,
-      impactedPopulation: affected ? formatPopulation(affected) : "Unknown",
-      timeframe: timeframeLabels[payload.timeframe] || payload.timeframe,
-      tags: payload.tags,
-      lastUpdated: new Date().toISOString(),
-    };
-
-    const updatedCustom = addCustomProblem(newProblem);
-    setProblems([...allEcoProblems, ...updatedCustom]);
-    setReportProblemOpen(false);
+      const updatedCustom = addCustomProblem(newProblem);
+      setProblems([...allEcoProblems, ...updatedCustom]);
+    } finally {
+      setReportProblemOpen(false);
+    }
   };
 
   const filteredProblems = useMemo(() => {

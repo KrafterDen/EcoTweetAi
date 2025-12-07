@@ -79,3 +79,17 @@ export interface Solution {
   upvoted?: boolean;
   downvoted?: boolean;
 }
+
+export interface ReportProblemPayload {
+  title: string;
+  description: string;
+  location: string;
+  region: RegionValue;
+  country?: string | null;
+  city?: string | null;
+  affectedPopulation?: number | null;
+  urgency: number;
+  tags: string[];
+  timeframe: string;
+  imageUrl?: string;
+}

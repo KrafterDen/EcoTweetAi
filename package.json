@@ -33,6 +33,7 @@
             "class-variance-authority": "^0.7.1",
             "clsx": "*",
             "cmdk": "^1.1.1",
+            "cors": "^2.8.5",
             "embla-carousel-react": "^8.6.0",
             "express": "^5.2.1",
             "globe.gl": "^2.45.0",
@@ -69,6 +70,7 @@
             "build": "vite build",
             "db:push": "prisma db push",
             "db:seed": "prisma db seed",
-            "prisma:generate": "prisma generate"
+            "prisma:generate": "prisma generate",
+            "api": "node server/index.js"
       }
 }

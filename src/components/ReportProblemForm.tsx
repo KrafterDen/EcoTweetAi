@@ -12,24 +12,10 @@ import {
   SelectValue,
 } from "./ui/select";
 import { regions, countriesByRegion, citiesByCountry } from "../data/regions";
-import type { RegionValue } from "../types";
+import type { RegionValue, ReportProblemPayload } from "../types";
 
 // Список тегов, который ты просил
 const AVAILABLE_TAGS = ["Flood", "Coastal", "Critical", "Air", "Health", "Urban"];
-
-export type ReportProblemPayload = {
-  title: string;
-  description: string;
-  location: string;
-  region: RegionValue;
-  country?: string | null;
-  city?: string | null;
-  affectedPopulation?: number | null;
-  urgency: number;
-  tags: string[];
-  timeframe: string;
-  imageUrl?: string;
-};
 
 interface ReportProblemFormProps {
   onSubmit?: (payload: ReportProblemPayload) => void;
