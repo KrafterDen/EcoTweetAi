@@ -27,6 +27,8 @@ import { ActivistResources } from "./components/ActivistResources";
 import { EcoProblem, EcoProblemRecord, RegionValue } from "./types";
 import { regionToContinentMap } from "./data/regions";
 import { deriveHighlights } from "./utils/highlights";
+import { getCustomProblems, addCustomProblem } from "./utils/customProblemsStorage";
+import type { ReportProblemPayload } from "./components/ReportProblemForm";
 
 const formatPopulation = (value: number) => {
   if (value >= 1_000_000_000) {
@@ -71,6 +73,10 @@ const getInitialView = (): AppView => {
 
 export default function App() {
   const [selectedProblem, setSelectedProblem] = useState<EcoProblem | null>(null);
+  const [problems, setProblems] = useState<EcoProblem[]>(() => [
+    ...allEcoProblems,
+    ...getCustomProblems(),
+  ]);
   
   // Состояние для сложного селектора
   const [selectedRegion, setSelectedRegion] = useState<RegionValue>("GLOBAL");
@@ -81,7 +87,7 @@ export default function App() {
   const [highlightTakeAction, setHighlightTakeAction] = useState(false);
   const [view, setView] = useState<AppView>(() => getInitialView());
   const [reportProblemOpen, setReportProblemOpen] = useState(false);
-  const highlights = deriveHighlights(allEcoProblems);
+  const highlights = deriveHighlights(problems);
   
   const regionSelectorRef = useRef<HTMLDivElement>(null);
   const problemsGridRef = useRef<HTMLDivElement>(null);
@@ -164,22 +170,52 @@ export default function App() {
     setSelectedCity(value);
   };
 
+  const timeframeLabels: Record<string, string> = {
+    next_5_years: "Next 5 years",
+    next_10_years: "Next 10 years",
+    next_20_years: "Next 20 years",
+  };
+
+  const handleProblemSubmit = (payload: ReportProblemPayload) => {
+    const affected = payload.affectedPopulation ?? null;
+    const newProblem: EcoProblem = {
+      id: `custom-${Date.now()}`,
+      continent: "Global",
+      country: null,
+      city: null,
+      title: payload.title,
+      description: payload.description,
+      imageUrl:
+        payload.imageUrl ||
+        "https://images.pexels.com/photos/2409022/pexels-photo-2409022.jpeg",
+      urgencyLevel: payload.urgency,
+      impactedPopulation: affected ? formatPopulation(affected) : "Unknown",
+      timeframe: timeframeLabels[payload.timeframe] || payload.timeframe,
+      tags: payload.tags,
+      lastUpdated: new Date().toISOString(),
+    };
+
+    const updatedCustom = addCustomProblem(newProblem);
+    setProblems([...allEcoProblems, ...updatedCustom]);
+    setReportProblemOpen(false);
+  };
+
   const filteredProblems = useMemo(() => {
     const continent = regionToContinentMap[selectedRegion];
-    let problems = !continent
-      ? allEcoProblems
-      : allEcoProblems.filter((problem) => problem.continent === continent);
+    let currentProblems = !continent
+      ? problems
+      : problems.filter((problem) => problem.continent === continent);
 
-    if (selectedCountry && problems.some((problem) => problem.country)) {
-      problems = problems.filter((problem) => problem.country === selectedCountry);
+    if (selectedCountry && currentProblems.some((problem) => problem.country)) {
+      currentProblems = currentProblems.filter((problem) => problem.country === selectedCountry);
     }
 
-    if (selectedCity && problems.some((problem) => problem.city)) {
-      problems = problems.filter((problem) => problem.city === selectedCity);
+    if (selectedCity && currentProblems.some((problem) => problem.city)) {
+      currentProblems = currentProblems.filter((problem) => problem.city === selectedCity);
     }
 
-    return problems;
-  }, [selectedRegion, selectedCountry, selectedCity]);
+    return currentProblems;
+  }, [selectedRegion, selectedCountry, selectedCity, problems]);
 
   const closeTutorial = () => {
     setTutorialStep(0);
@@ -190,11 +226,11 @@ export default function App() {
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4"
       onClick={() => setReportProblemOpen(false)}
     >
-      <div
-        className="max-h-[90vh] overflow-y-auto"
-        onClick={(event) => event.stopPropagation()}
-      >
-        <ReportProblemForm />
+          <div
+            className="max-h-[90vh] overflow-y-auto"
+            onClick={(event) => event.stopPropagation()}
+          >
+        <ReportProblemForm onSubmit={handleProblemSubmit} />
       </div>
     </div>
   ) : null;

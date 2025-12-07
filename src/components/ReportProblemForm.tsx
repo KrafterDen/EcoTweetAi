@@ -8,7 +8,22 @@ import { AlertTriangle, MapPin } from "lucide-react";
 // Список тегов, который ты просил
 const AVAILABLE_TAGS = ["Flood", "Coastal", "Critical", "Air", "Health", "Urban"];
 
-export function ReportProblemForm() {
+export type ReportProblemPayload = {
+  title: string;
+  description: string;
+  location: string;
+  affectedPopulation?: number | null;
+  urgency: number;
+  tags: string[];
+  timeframe: string;
+  imageUrl?: string;
+};
+
+interface ReportProblemFormProps {
+  onSubmit?: (payload: ReportProblemPayload) => void;
+}
+
+export function ReportProblemForm({ onSubmit }: ReportProblemFormProps) {
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -17,12 +32,38 @@ export function ReportProblemForm() {
     urgency: 50, // Слайдер от 0 до 100
     tags: [] as string[],
     timeframe: "next_5_years",
+    imageUrl: "",
   });
+  const [fileError, setFileError] = useState<string | null>(null);
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    console.log("Problem Report Submitted:", formData);
-    // Здесь будет логика отправки на сервер
+    const payload: ReportProblemPayload = {
+      title: formData.title.trim(),
+      description: formData.description.trim(),
+      location: formData.location.trim(),
+      affectedPopulation: formData.affectedPopulation
+        ? Number(formData.affectedPopulation)
+        : null,
+      urgency: Number(formData.urgency),
+      tags: formData.tags,
+      timeframe: formData.timeframe,
+      imageUrl: formData.imageUrl.trim() || undefined,
+    };
+
+    onSubmit?.(payload);
+
+    setFormData({
+      title: "",
+      description: "",
+      location: "",
+      affectedPopulation: "",
+      urgency: 50,
+      tags: [],
+      timeframe: "next_5_years",
+      imageUrl: "",
+    });
+    setFileError(null);
   };
 
   const handleChange = (
@@ -35,6 +76,23 @@ export function ReportProblemForm() {
   // Обработчик для слайдера (так как event target может отличаться)
   const handleSliderChange = (e: ChangeEvent<HTMLInputElement>) => {
     setFormData((prev) => ({ ...prev, urgency: Number(e.target.value) }));
+  };
+
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      setFileError("Please upload an image file");
+      return;
+    }
+    setFileError(null);
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (typeof reader.result === "string") {
+        setFormData((prev) => ({ ...prev, imageUrl: reader.result as string }));
+      }
+    };
+    reader.readAsDataURL(file);
   };
 
   // Логика добавления/удаления тегов
@@ -92,6 +150,27 @@ export function ReportProblemForm() {
             required
             className="focus-visible:ring-rose-500"
           />
+        </div>
+
+        {/* Изображение */}
+        <div className="space-y-2">
+          <Label htmlFor="imageUrl">Image (URL or upload)</Label>
+          <Input
+            id="imageUrl"
+            name="imageUrl"
+            type="url"
+            value={formData.imageUrl}
+            onChange={handleChange}
+            placeholder="https://example.com/photo.jpg"
+            className="focus-visible:ring-rose-500"
+          />
+          <Input
+            type="file"
+            accept="image/*"
+            onChange={handleFileChange}
+            className="cursor-pointer"
+          />
+          {fileError && <p className="text-xs text-rose-600">{fileError}</p>}
         </div>
 
         {/* Локализация */}
