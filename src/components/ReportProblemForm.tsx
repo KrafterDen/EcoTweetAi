@@ -3,7 +3,7 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { Textarea } from "./ui/textarea";
-import { AlertTriangle, MapPin } from "lucide-react";
+import { AlertTriangle, MapPin, Paperclip } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -28,13 +28,13 @@ export function ReportProblemForm({ onSubmit }: ReportProblemFormProps) {
     affectedPopulation: "",
     urgency: 50, // Слайдер от 0 до 100
     tags: [] as string[],
-    timeframe: "next_5_years",
+    timeframe: "next 5 years",
     imageUrl: "",
   });
   const [selectedRegion, setSelectedRegion] = useState<RegionValue>("GLOBAL");
   const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
   const [selectedCity, setSelectedCity] = useState<string | null>(null);
-  const [fileError, setFileError] = useState<string | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   const availableCountries = useMemo(
     () => countriesByRegion[selectedRegion] || [],
@@ -66,6 +66,7 @@ export function ReportProblemForm({ onSubmit }: ReportProblemFormProps) {
       tags: formData.tags,
       timeframe: formData.timeframe,
       imageUrl: formData.imageUrl.trim() || undefined,
+      imageFile: selectedFile,
     };
 
     onSubmit?.(payload);
@@ -82,7 +83,7 @@ export function ReportProblemForm({ onSubmit }: ReportProblemFormProps) {
     setSelectedRegion("GLOBAL");
     setSelectedCountry(null);
     setSelectedCity(null);
-    setFileError(null);
+    setSelectedFile(null);
   };
 
   const handleChange = (
@@ -95,23 +96,6 @@ export function ReportProblemForm({ onSubmit }: ReportProblemFormProps) {
   // Обработчик для слайдера (так как event target может отличаться)
   const handleSliderChange = (e: ChangeEvent<HTMLInputElement>) => {
     setFormData((prev) => ({ ...prev, urgency: Number(e.target.value) }));
-  };
-
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    if (!file.type.startsWith("image/")) {
-      setFileError("Please upload an image file");
-      return;
-    }
-    setFileError(null);
-    const reader = new FileReader();
-    reader.onload = () => {
-      if (typeof reader.result === "string") {
-        setFormData((prev) => ({ ...prev, imageUrl: reader.result as string }));
-      }
-    };
-    reader.readAsDataURL(file);
   };
 
   // Логика добавления/удаления тегов
@@ -173,7 +157,7 @@ export function ReportProblemForm({ onSubmit }: ReportProblemFormProps) {
 
         {/* Изображение */}
         <div className="space-y-2">
-          <Label htmlFor="imageUrl">Image (URL or upload)</Label>
+          <Label htmlFor="imageUrl">Image (URL or file)</Label>
           <Input
             id="imageUrl"
             name="imageUrl"
@@ -183,13 +167,21 @@ export function ReportProblemForm({ onSubmit }: ReportProblemFormProps) {
             placeholder="https://example.com/photo.jpg"
             className="focus-visible:ring-rose-500"
           />
-          <Input
-            type="file"
-            accept="image/*"
-            onChange={handleFileChange}
-            className="cursor-pointer"
-          />
-          {fileError && <p className="text-xs text-rose-600">{fileError}</p>}
+          <div className="flex items-center gap-2">
+            <Paperclip className="h-4 w-4 text-slate-500" />
+            <Input
+              type="file"
+              accept="image/*"
+              onChange={(e) => {
+                const file = e.target.files?.[0] ?? null;
+                setSelectedFile(file);
+              }}
+              className="cursor-pointer"
+            />
+          </div>
+          <p className="text-xs text-slate-500">
+            Prefer a hosted URL; files will be uploaded to the server and referenced by URL (no base64).
+          </p>
         </div>
 
         {/* Локализация */}
@@ -286,9 +278,9 @@ export function ReportProblemForm({ onSubmit }: ReportProblemFormProps) {
               onChange={handleChange}
               className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
             >
-              <option value="next_5_years">Next 5 years</option>
-              <option value="next_10_years">Next 10 years</option>
-              <option value="next_20_years">Next 20 years</option>
+              <option value="next 5 years">Next 5 years</option>
+              <option value="next 10 years">Next 10 years</option>
+              <option value="next 20 years">Next 20 years</option>
             </select>
           </div>
         </div>

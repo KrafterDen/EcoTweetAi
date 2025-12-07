@@ -1,6 +1,9 @@
 const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
+const multer = require("multer");
+const path = require("path");
+const fs = require("fs");
 const { PrismaClient } = require("@prisma/client");
 
 const prisma = new PrismaClient();
@@ -22,6 +25,7 @@ const regionToContinentMap = {
 
 app.use(cors());
 app.use(bodyParser.json({ limit: "5mb" }));
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 const requireAuth = (req, res, next) => {
   const header = req.headers.authorization || "";
@@ -31,6 +35,20 @@ const requireAuth = (req, res, next) => {
   }
   next();
 };
+
+const uploadsDir = path.join(__dirname, "uploads");
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+}
+const storage = multer.diskStorage({
+  destination: (_req, _file, cb) => cb(null, uploadsDir),
+  filename: (_req, file, cb) => {
+    const unique = `${Date.now()}-${Math.round(Math.random() * 1e6)}`;
+    const ext = path.extname(file.originalname) || ".jpg";
+    cb(null, `${unique}${ext}`);
+  },
+});
+const upload = multer({ storage });
 
 const formatProblem = (problem) => ({
   id: problem.id,
@@ -168,6 +186,15 @@ app.post("/api/solutions/:id/vote", requireAuth, async (req, res) => {
   });
 
   res.json({ solution: formatSolution(updated) });
+});
+
+app.post("/api/upload", requireAuth, upload.single("file"), (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ error: "No file uploaded" });
+  }
+  const relative = `/uploads/${req.file.filename}`;
+  const absolute = `${req.protocol}://${req.get("host")}${relative}`;
+  res.status(201).json({ url: absolute });
 });
 
 app.listen(PORT, () => {

@@ -29,7 +29,7 @@ import { regionToContinentMap } from "./data/regions";
 import { deriveHighlights } from "./utils/highlights";
 import { getCustomProblems, addCustomProblem } from "./utils/customProblemsStorage";
 import type { ReportProblemPayload } from "./types";
-import { fetchProblems, createProblem } from "./utils/api";
+import { fetchProblems, createProblem, uploadAttachment } from "./utils/api";
 
 const formatPopulation = (value: number) => {
   if (value >= 1_000_000_000) {
@@ -189,6 +189,7 @@ export default function App() {
   const timeframeLabels: Record<string, string> = {
     next_5_years: "Next 5 years",
     next_10_years: "Next 10 years",
+    next_15_years: "Next 15 years",
     next_20_years: "Next 20 years",
   };
 
@@ -197,7 +198,16 @@ export default function App() {
     const continent =
       regionToContinentMap[payload.region] ?? "Global";
     try {
-      const created = await createProblem(payload);
+      let imageUrl = payload.imageUrl;
+      if (!imageUrl && payload.imageFile) {
+        try {
+          imageUrl = await uploadAttachment(payload.imageFile);
+        } catch {
+          imageUrl = undefined;
+        }
+      }
+
+      const created = await createProblem({ ...payload, imageUrl });
       setProblems((prev) => [created, ...prev.filter((p) => p.id !== created.id)]);
     } catch {
       const newProblem: EcoProblem = {

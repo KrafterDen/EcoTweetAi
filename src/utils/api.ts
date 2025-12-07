@@ -49,3 +49,22 @@ export const createProblem = async (payload: ReportProblemPayload): Promise<EcoP
   const data = await response.json();
   return mapProblem(data.problem);
 };
+
+export const uploadAttachment = async (file: File): Promise<string> => {
+  const formData = new FormData();
+  formData.append("file", file);
+  const response = await fetch(`${API_BASE}/api/upload`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${API_TOKEN}`,
+    },
+    body: formData,
+  });
+  if (!response.ok) {
+    throw new Error(`Upload failed ${response.status}`);
+  }
+  const data = await response.json();
+  const url = data.url as string;
+  if (url.startsWith("http")) return url;
+  return `${API_BASE}${url}`;
+};

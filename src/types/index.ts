@@ -92,4 +92,5 @@ export interface ReportProblemPayload {
   tags: string[];
   timeframe: string;
   imageUrl?: string;
+  imageFile?: File | null;
 }
