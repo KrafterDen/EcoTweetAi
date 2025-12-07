@@ -178,11 +178,14 @@ export default function App() {
 
   const handleProblemSubmit = (payload: ReportProblemPayload) => {
     const affected = payload.affectedPopulation ?? null;
+    const continent =
+      regionToContinentMap[payload.region] ?? "Global";
+
     const newProblem: EcoProblem = {
       id: `custom-${Date.now()}`,
-      continent: "Global",
-      country: null,
-      city: null,
+      continent: continent || "Global",
+      country: payload.country ?? null,
+      city: payload.city ?? null,
       title: payload.title,
       description: payload.description,
       imageUrl:

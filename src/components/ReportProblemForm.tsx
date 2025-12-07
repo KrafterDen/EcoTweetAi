@@ -1,9 +1,18 @@
-import { ChangeEvent, FormEvent, useState } from "react";
+import { ChangeEvent, FormEvent, useMemo, useState } from "react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { Textarea } from "./ui/textarea";
 import { AlertTriangle, MapPin } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
+import { regions, countriesByRegion, citiesByCountry } from "../data/regions";
+import type { RegionValue } from "../types";
 
 // Список тегов, который ты просил
 const AVAILABLE_TAGS = ["Flood", "Coastal", "Critical", "Air", "Health", "Urban"];
@@ -12,6 +21,9 @@ export type ReportProblemPayload = {
   title: string;
   description: string;
   location: string;
+  region: RegionValue;
+  country?: string | null;
+  city?: string | null;
   affectedPopulation?: number | null;
   urgency: number;
   tags: string[];
@@ -27,21 +39,40 @@ export function ReportProblemForm({ onSubmit }: ReportProblemFormProps) {
   const [formData, setFormData] = useState({
     title: "",
     description: "",
-    location: "48.3794° N, 31.1656° E", // Хардкод координат (центр Украины) как заглушка
     affectedPopulation: "",
     urgency: 50, // Слайдер от 0 до 100
     tags: [] as string[],
     timeframe: "next_5_years",
     imageUrl: "",
   });
+  const [selectedRegion, setSelectedRegion] = useState<RegionValue>("GLOBAL");
+  const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
+  const [selectedCity, setSelectedCity] = useState<string | null>(null);
   const [fileError, setFileError] = useState<string | null>(null);
+
+  const availableCountries = useMemo(
+    () => countriesByRegion[selectedRegion] || [],
+    [selectedRegion]
+  );
+  const availableCities = useMemo(
+    () => (selectedCountry ? citiesByCountry[selectedCountry] || [] : []),
+    [selectedCountry]
+  );
+
+  const regionLabel = regions.find((r) => r.value === selectedRegion)?.label ?? "Global";
+  const locationSummary = [selectedCity, selectedCountry, regionLabel]
+    .filter(Boolean)
+    .join(", ");
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     const payload: ReportProblemPayload = {
       title: formData.title.trim(),
       description: formData.description.trim(),
-      location: formData.location.trim(),
+      location: locationSummary || regionLabel,
+      region: selectedRegion,
+      country: selectedCountry,
+      city: selectedCity,
       affectedPopulation: formData.affectedPopulation
         ? Number(formData.affectedPopulation)
         : null,
@@ -56,13 +87,15 @@ export function ReportProblemForm({ onSubmit }: ReportProblemFormProps) {
     setFormData({
       title: "",
       description: "",
-      location: "",
       affectedPopulation: "",
       urgency: 50,
       tags: [],
       timeframe: "next_5_years",
       imageUrl: "",
     });
+    setSelectedRegion("GLOBAL");
+    setSelectedCountry(null);
+    setSelectedCity(null);
     setFileError(null);
   };
 
@@ -175,20 +208,71 @@ export function ReportProblemForm({ onSubmit }: ReportProblemFormProps) {
 
         {/* Локализация */}
         <div className="space-y-2">
-          <Label htmlFor="location">Location (Coordinates)</Label>
-          <div className="relative">
-            <MapPin className="absolute left-2.5 top-2.5 h-4 w-4 text-slate-500" />
-            <Input
-              id="location"
-              name="location"
-              value={formData.location}
-              onChange={handleChange}
-              className="pl-9 bg-white"
-              placeholder="e.g., 48.3794° N, 31.1656° E or City, Country"
-            />
+          <Label>Location</Label>
+          <div className="flex flex-col gap-3">
+            <div className="flex items-center gap-2">
+              <MapPin className="h-4 w-4 text-slate-500" />
+              <Select
+                value={selectedRegion}
+                onValueChange={(value) => {
+                  setSelectedRegion(value as RegionValue);
+                  setSelectedCountry(null);
+                  setSelectedCity(null);
+                }}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select region" />
+                </SelectTrigger>
+                <SelectContent>
+                  {regions.map((region) => (
+                    <SelectItem key={region.value} value={region.value}>
+                      {region.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <Select
+              value={selectedCountry ?? ""}
+              onValueChange={(value) => {
+                setSelectedCountry(value);
+                setSelectedCity(null);
+              }}
+              disabled={availableCountries.length === 0}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select country" />
+              </SelectTrigger>
+              <SelectContent>
+                {availableCountries.map((country) => (
+                  <SelectItem key={country} value={country}>
+                    {country}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Select
+              value={selectedCity ?? ""}
+              onValueChange={setSelectedCity}
+              disabled={availableCities.length === 0}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select city" />
+              </SelectTrigger>
+              <SelectContent>
+                {availableCities.map((city) => (
+                  <SelectItem key={city} value={city}>
+                    {city}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <p className="text-xs text-slate-500">
+              Selected: {locationSummary || "No location selected"}
+            </p>
           </div>
           <p className="text-xs text-slate-400">
-            * Enter coordinates or a city/region; automatic geolocation is currently disabled.
+            * Select region and (optionally) country/city to localize the issue.
           </p>
         </div>
 
