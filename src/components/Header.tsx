@@ -7,12 +7,14 @@ interface HeaderProps {
   onNavigateToResources?: () => void;
   onNavigateToInvolved?: () => void;
   onReportProblem?: () => void;
+  onOpenAdminLogin?: () => void; // Тільки сигнал відкриття
 }
 
 export function Header({
   onNavigateToResources,
   onNavigateToInvolved,
   onReportProblem,
+  onOpenAdminLogin
 }: HeaderProps) {
   const { t, locale, setLocale } = useI18n();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -27,29 +29,34 @@ export function Header({
     <nav className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-emerald-100 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          {/* Logo/Brand + Locale */}
+
           <div className="flex items-center gap-4">
-            <img
-              src="/logo.png"
-              alt="EcoTweetAI logo"
-              className="w-10 h-10 rounded-lg object-contain shadow-sm"
-            />
-            <div className="flex flex-col">
-              <span className="text-emerald-900 tracking-tight">EcoTweetAI</span>
-              <span className="text-xs text-emerald-600 -mt-1">Crowd platform</span>
-            </div>
+            <button 
+              onClick={onOpenAdminLogin}
+              className="flex items-center gap-4 hover:opacity-80 transition-opacity focus:outline-none"
+              title="Admin Login"
+            >
+              <img
+                src="/logo.png"
+                alt="EcoTweetAI logo"
+                className="w-10 h-10 rounded-lg object-contain shadow-sm"
+              />
+              <div className="flex flex-col items-start">
+                <span className="text-emerald-900 tracking-tight font-semibold">EcoTweetAI</span>
+                <span className="text-xs text-emerald-600 -mt-1">Crowd platform</span>
+              </div>
+            </button>
+
             <select
               value={locale}
               onChange={(e) => setLocale(e.target.value as "uk" | "en")}
-              className="rounded-md border border-emerald-200 bg-white px-2 py-1 text-xs text-emerald-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-              aria-label="Select language"
+              className="rounded-md border border-emerald-200 bg-white px-2 py-1 text-xs text-emerald-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 ml-2"
             >
               <option value="uk">UA</option>
               <option value="en">EN</option>
             </select>
           </div>
 
-          {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-8">
             {navLinks.map((link) => {
               const Icon = link.icon;
@@ -76,7 +83,6 @@ export function Header({
             })}
           </div>
 
-          {/* CTA Button */}
           <div className="hidden md:block">
             <Button
               className="rounded-full border bg-red-700 px-5 text-white shadow-md shadow-red-300/60 transition-colors hover:bg-emerald-600 active:bg-emerald-400"
@@ -87,24 +93,18 @@ export function Header({
             </Button>
           </div>
 
-          {/* Mobile Menu Button */}
           <button
             className="md:hidden p-2 rounded-lg hover:bg-emerald-50 transition-colors"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            aria-label="Toggle menu"
           >
-            {mobileMenuOpen ? (
-              <X className="w-6 h-6 text-emerald-900" />
-            ) : (
-              <Menu className="w-6 h-6 text-emerald-900" />
-            )}
+            {mobileMenuOpen ? <X className="w-6 h-6 text-emerald-900" /> : <Menu className="w-6 h-6 text-emerald-900" />}
           </button>
         </div>
 
-        {/* Mobile Navigation */}
         {mobileMenuOpen && (
           <div className="md:hidden py-4 border-t border-emerald-100">
-            <div className="flex flex-col gap-4">
+
+             <div className="flex flex-col gap-4">
               {navLinks.map((link) => {
                 const Icon = link.icon;
                 return (
@@ -112,45 +112,17 @@ export function Header({
                     key={link.name}
                     href={link.href}
                     className="flex items-center gap-3 text-gray-700 hover:text-emerald-600 transition-colors py-2"
-                    onClick={(event) => {
-                      if (link.href === "#resources" && onNavigateToResources) {
-                        event.preventDefault();
-                        onNavigateToResources();
-                      }
-                      if (link.href === "#involved" && onNavigateToInvolved) {
-                        event.preventDefault();
-                        onNavigateToInvolved();
-                      }
-                      setMobileMenuOpen(false);
-                    }}
+                    onClick={() => setMobileMenuOpen(false)}
                   >
                     <Icon className="w-5 h-5" />
                     <span>{link.name}</span>
                   </a>
                 );
               })}
-              <Button
-                className="mt-2 w-full rounded-full border border-red-700 bg-red-600 px-5 text-white shadow-md shadow-red-300/60 transition-colors hover:bg-red-700 hover:border-red-800 active:bg-red-800"
-                onClick={() => {
-                  onReportProblem?.();
-                  setMobileMenuOpen(false);
-                }}
-              >
-                <AlertTriangle className="mr-2 h-4 w-4" />
-                {t("nav.reportMobile", "Suggest a problem")}
+              <Button onClick={onReportProblem} className="w-full bg-red-600 text-white">
+                 Report
               </Button>
-              <div className="flex items-center gap-2">
-                <span className="text-xs text-gray-600">UA</span>
-                <input
-                  type="checkbox"
-                  checked={locale === "en"}
-                  onChange={(e) => setLocale(e.target.checked ? "en" : "uk")}
-                  aria-label="Toggle language"
-                  className="cursor-pointer"
-                />
-                <span className="text-xs text-gray-600">EN</span>
-              </div>
-            </div>
+             </div>
           </div>
         )}
       </div>

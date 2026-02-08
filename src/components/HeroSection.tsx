@@ -3,14 +3,12 @@ import Globe from 'react-globe.gl';
 import { ArrowRight, Leaf } from 'lucide-react';
 import { useI18n } from '../i18n';
 
-// --- ТИПИ ПРОПСІВ (Синхронізовано з App.tsx) ---
 interface HeroSectionProps {
   highlightTakeAction: boolean;
   onSavePlanetClick: () => void;
   onTakeActionClick: () => void;
 }
 
-// --- ДАНІ ДЛЯ ГЛОБУСА ---
 const SOLUTIONS_HUBS = [
   { lat: 50.45, lng: 30.52 }, { lat: 49.83, lng: 24.02 }, // Ukraine
   { lat: 52.52, lng: 13.40 }, { lat: 48.85, lng: 2.35 },  // Germany, France
@@ -28,7 +26,6 @@ const PROBLEMS_DATA = [
   { lat: -75.0, lng: 0.0, label: "Ice Melting" }
 ].map(p => ({ ...p, type: 'problem' }));
 
-// --- LIVE FEED COMPONENT ---
 const LiveFeed = () => {
   const [items, setItems] = useState<any[]>([]);
   
@@ -82,7 +79,6 @@ const LiveFeed = () => {
   );
 };
 
-// --- ГОЛОВНИЙ КОМПОНЕНТ (ВИПРАВЛЕНО ЕКСПОРТ) ---
 export const HeroSection: React.FC<HeroSectionProps> = ({
   highlightTakeAction,
   onSavePlanetClick,
@@ -96,9 +92,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   const [dimensions, setDimensions] = useState({ w: 800, h: 720 });
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // 1. Ініціалізація даних
   useEffect(() => {
-    // Resize handler
+
     const updateDimensions = () => {
       if (containerRef.current) {
         const width = containerRef.current.clientWidth;
@@ -113,7 +108,6 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
     window.addEventListener('resize', updateDimensions);
     updateDimensions();
 
-    // Data Gen
     const solData: any[] = [];
     SOLUTIONS_HUBS.forEach(hub => {
         solData.push({
@@ -132,7 +126,6 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
     });
     setArcs(arcData);
 
-    // GeoJSON
     fetch('https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_admin_0_countries.geojson')
         .then(res => res.json())
         .then(data => setCountries(data))
@@ -141,7 +134,6 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
     return () => window.removeEventListener('resize', updateDimensions);
   }, []);
 
-  // 2. Налаштування камери глобуса
   useEffect(() => { 
     if (globeEl.current) {
         globeEl.current.pointOfView({ lat: 25, lng: 15, altitude: 1.8 });
@@ -154,7 +146,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   return (
     <div ref={containerRef} className="relative w-full h-[85vh] md:h-[90vh] bg-[#013220] overflow-hidden text-white font-sans">
       
-      {/* 3D GLOBE */}
+
       <div
         className="absolute top-0 bottom-0 left-1/2 right-[-6%] md:left-[45%] lg:left-[35%] z-0 opacity-0 animate-[fadeIn_2s_forwards]"
         style={{ animation: "fadeIn 2s forwards" }}
@@ -214,10 +206,9 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
         />
       </div>
       
-      {/* Gradient Overlay */}
+
       <div className="absolute top-0 left-0 w-full md:w-3/5 h-full bg-gradient-to-b md:bg-gradient-to-r from-[#013220] via-[#013220]/80 to-transparent z-0 pointer-events-none" />
 
-      {/* Content */}
       <div className="relative z-10 max-w-2xl mx-auto md:ml-[14%] md:mx-0 h-full flex flex-col justify-center px-4 md:px-0 text-center md:text-left pointer-events-none">
         <div className="pointer-events-auto">
             <div className="inline-flex items-center text-[#ff6b6b] font-bold text-xs md:text-sm tracking-wider mb-4 uppercase bg-[#ff6b6b]/10 px-3 py-1 rounded-full border border-[#ff6b6b]/20">

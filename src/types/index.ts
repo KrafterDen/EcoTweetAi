@@ -24,7 +24,7 @@ export interface EcoProblemRecord {
 }
 
 export interface EcoProblem {
-  id: string;
+  id: number;
   continent: string;
   country?: string;
   city?: string;
@@ -63,9 +63,9 @@ export interface ActivistProfilesFile {
 
 export interface SolutionRecord {
   id: string;
-  problem_id: string;
+  problemId: number;
   author: string;
-  time_posted: string;
+  timePosted: string;
   content: string;
   votes: number;
 }

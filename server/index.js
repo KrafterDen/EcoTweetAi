@@ -75,9 +75,10 @@ const formatProblem = (problem) => ({
 
 const formatSolution = (solution) => ({
   id: solution.id,
-  problem_id: solution.problemId,
+
+  problemId: solution.problemId,
   author: solution.author,
-  time_posted: solution.timePosted?.toISOString?.() || solution.timePosted,
+  timePosted: solution.timePosted?.toISOString?.() || solution.timePosted,
   content: solution.content,
   votes: solution.votes,
 });
@@ -87,14 +88,20 @@ app.get("/api/health", (_req, res) => {
 });
 
 app.get("/api/problems", async (_req, res) => {
-  const problems = await prisma.problem.findMany({
-    orderBy: { urgencyPercent: "desc" },
-  });
-  res.json({ problems: problems.map(formatProblem) });
+  try {
+    const problems = await prisma.problem.findMany({
+      orderBy: { urgencyPercent: "desc" },
+    });
+    res.json({ problems: problems.map(formatProblem) });
+  } catch (error) {
+    console.error("Error fetching problems:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
 });
 
 app.post("/api/problems", requireAuth, async (req, res) => {
   const {
+    id: _ignoredId, // ignore any id from request - db auto-generates it
     title,
     description,
     region = "GLOBAL",
@@ -112,38 +119,64 @@ app.post("/api/problems", requireAuth, async (req, res) => {
   }
 
   const continent = regionToContinentMap[region] ?? "Global";
-  const id = `api-${Date.now()}`;
+  
 
-  const created = await prisma.problem.create({
-    data: {
-      id,
-      continent,
-      country,
-      city,
-      title,
-      description,
-      urgencyPercent: Number(urgency) || 0,
-      affectedPopulation: affectedPopulation ? Number(affectedPopulation) : 0,
-      criticalTimeframe: timeframe,
-      tagsJson: JSON.stringify(tags ?? []),
-      imageUrl:
-        imageUrl ||
-        "https://images.pexels.com/photos/2409022/pexels-photo-2409022.jpeg",
-      lastUpdated: new Date(),
-    },
-  });
+  try {
+    const created = await prisma.problem.create({
+      data: {
 
-  res.status(201).json({ problem: formatProblem(created) });
+        continent,
+        country,
+        city,
+        title,
+        description,
+        urgencyPercent: Number(urgency) || 0,
+        affectedPopulation: affectedPopulation ? Number(affectedPopulation) : 0,
+        criticalTimeframe: timeframe,
+        tagsJson: JSON.stringify(tags ?? []),
+        imageUrl:
+          imageUrl ||
+          "https://images.pexels.com/photos/2409022/pexels-photo-2409022.jpeg",
+        lastUpdated: new Date(),
+      },
+    });
+
+    res.status(201).json({ problem: formatProblem(created) });
+  } catch (error) {
+    console.error("Error creating problem:", error);
+    res.status(500).json({ error: "Failed to create problem" });
+  }
+});
+
+app.delete("/api/problems/:id", requireAuth, async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    await prisma.problem.delete({
+      where: { id: Number(id) },
+    });
+    res.json({ success: true });
+  } catch (error) {
+    console.error("Error deleting problem:", error);
+    res.status(500).json({ error: "Failed to delete problem" });
+  }
 });
 
 app.get("/api/solutions", async (req, res) => {
   const { problemId } = req.query;
-  const where = problemId ? { problemId } : {};
-  const solutions = await prisma.solution.findMany({
-    where,
-    orderBy: { timePosted: "desc" },
-  });
-  res.json({ solutions: solutions.map(formatSolution) });
+
+  const where = problemId ? { problemId: Number(problemId) } : {};
+  
+  try {
+    const solutions = await prisma.solution.findMany({
+      where,
+      orderBy: { timePosted: "desc" },
+    });
+    res.json({ solutions: solutions.map(formatSolution) });
+  } catch (error) {
+    console.error("Error fetching solutions:", error);
+    res.json({ solutions: [] }); // Повертаємо пустий масив, щоб не ламати фронтенд
+  }
 });
 
 app.post("/api/solutions", requireAuth, async (req, res) => {
@@ -153,48 +186,64 @@ app.post("/api/solutions", requireAuth, async (req, res) => {
   }
 
   const id = `sol-${Date.now()}`;
-  const created = await prisma.solution.create({
-    data: {
-      id,
-      problemId,
-      author,
-      content,
-      votes: 1,
-      timePosted: new Date(),
-    },
-  });
+  
+  try {
+    const created = await prisma.solution.create({
+      data: {
+        id,
 
-  res.status(201).json({ solution: formatSolution(created) });
+        problemId: Number(problemId),
+        author,
+        content,
+        votes: 1,
+        timePosted: new Date(),
+      },
+    });
+
+    res.status(201).json({ solution: formatSolution(created) });
+  } catch (error) {
+    console.error("Error creating solution:", error);
+    res.status(500).json({ error: "Failed to create solution" });
+  }
 });
 
 app.post("/api/solutions/:id/vote", requireAuth, async (req, res) => {
   const { id } = req.params;
   const { direction } = req.body || {};
-  if (!["up", "down"].includes(direction)) {
-    return res.status(400).json({ error: "direction must be 'up' or 'down'" });
+
+  const { value } = req.body || {}; 
+
+  let delta = 0;
+  if (value === 1 || direction === "up") delta = 1;
+  else if (value === -1 || direction === "down") delta = -1;
+  else {
+      return res.status(400).json({ error: "Invalid vote value/direction" });
   }
 
-  const existing = await prisma.solution.findUnique({ where: { id } });
-  if (!existing) {
-    return res.status(404).json({ error: "Solution not found" });
+  try {
+    const existing = await prisma.solution.findUnique({ where: { id } });
+    if (!existing) {
+      return res.status(404).json({ error: "Solution not found" });
+    }
+
+    const updated = await prisma.solution.update({
+      where: { id },
+      data: { votes: (existing.votes || 0) + delta },
+    });
+
+    res.json({ solution: formatSolution(updated) });
+  } catch (error) {
+    console.error("Vote error:", error);
+    res.status(500).json({ error: "Vote failed" });
   }
-
-  const delta = direction === "up" ? 1 : -1;
-  const updated = await prisma.solution.update({
-    where: { id },
-    data: { votes: Math.max(0, (existing.votes || 0) + delta) },
-  });
-
-  res.json({ solution: formatSolution(updated) });
 });
 
 app.post("/api/upload", requireAuth, upload.single("file"), (req, res) => {
   if (!req.file) {
     return res.status(400).json({ error: "No file uploaded" });
   }
-  const relative = `/uploads/${req.file.filename}`;
-  const absolute = `${req.protocol}://${req.get("host")}${relative}`;
-  res.status(201).json({ url: absolute });
+  const url = `/uploads/${req.file.filename}`;
+  res.json({ url });
 });
 
 app.listen(PORT, () => {

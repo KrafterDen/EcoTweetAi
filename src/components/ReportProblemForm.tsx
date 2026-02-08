@@ -15,7 +15,6 @@ import { regions, countriesByRegion, citiesByCountry } from "../data/regions";
 import type { RegionValue, ReportProblemPayload } from "../types";
 import { useI18n } from "../i18n";
 
-// Теги українською
 const AVAILABLE_TAGS = ["Повінь", "Прибережна", "Критична", "Повітря", "Здоров'я", "Міська"];
 
 interface ReportProblemFormProps {
@@ -30,7 +29,7 @@ export function ReportProblemForm({ onSubmit }: ReportProblemFormProps) {
     affectedPopulation: "",
     urgency: 50, // Слайдер от 0 до 100
     tags: [] as string[],
-    timeframe: "next_5_years",
+    timeframe: "Next 5 years",
     imageUrl: "",
   });
   const [selectedRegion, setSelectedRegion] = useState<RegionValue>("GLOBAL");
@@ -79,7 +78,7 @@ export function ReportProblemForm({ onSubmit }: ReportProblemFormProps) {
       affectedPopulation: "",
       urgency: 50,
       tags: [],
-      timeframe: "next_5_years",
+      timeframe: "Next 5 years",
       imageUrl: "",
     });
     setSelectedRegion("GLOBAL");
@@ -95,12 +94,10 @@ export function ReportProblemForm({ onSubmit }: ReportProblemFormProps) {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Обработчик для слайдера (так как event target может отличаться)
   const handleSliderChange = (e: ChangeEvent<HTMLInputElement>) => {
     setFormData((prev) => ({ ...prev, urgency: Number(e.target.value) }));
   };
 
-  // Логика добавления/удаления тегов
   const toggleTag = (tag: string) => {
     setFormData((prev) => {
       const isSelected = prev.tags.includes(tag);
@@ -114,7 +111,7 @@ export function ReportProblemForm({ onSubmit }: ReportProblemFormProps) {
 
   return (
     <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8 border-t-4 border-rose-500">
-      {/* Заголовок с красным акцентом */}
+
       <div className="flex items-center justify-center gap-2 mb-6">
         <AlertTriangle className="size-8 text-rose-600" />
         <h1 className="text-xl font-bold text-slate-800">{t("report.title", "Report an Issue")}</h1>
@@ -128,7 +125,7 @@ export function ReportProblemForm({ onSubmit }: ReportProblemFormProps) {
       </p>
 
       <form onSubmit={handleSubmit} className="space-y-5">
-        {/* Название проблемы */}
+
         <div className="space-y-2">
           <Label htmlFor="title">{t("report.problemTitle", "Problem Title *")}</Label>
           <Input
@@ -142,7 +139,6 @@ export function ReportProblemForm({ onSubmit }: ReportProblemFormProps) {
           />
         </div>
 
-        {/* Описание проблемы */}
         <div className="space-y-2">
           <Label htmlFor="description">{t("report.description", "Description *")}</Label>
           <Textarea
@@ -157,7 +153,6 @@ export function ReportProblemForm({ onSubmit }: ReportProblemFormProps) {
           />
         </div>
 
-        {/* Изображение */}
         <div className="space-y-2">
           <Label htmlFor="imageUrl">{t("report.image", "Image (URL or file)")}</Label>
           <Input
@@ -186,7 +181,6 @@ export function ReportProblemForm({ onSubmit }: ReportProblemFormProps) {
           </p>
         </div>
 
-        {/* Локализация */}
         <div className="space-y-2">
           <Label>{t("report.location", "Location")}</Label>
           <div className="flex flex-col gap-3">
@@ -256,7 +250,6 @@ export function ReportProblemForm({ onSubmit }: ReportProblemFormProps) {
           </p>
         </div>
 
-        {/* Affected Population & Timeframe (в одну строку для компактности) */}
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
           <Label htmlFor="affectedPopulation">{t("report.affected", "Affected People")}</Label>
@@ -288,7 +281,6 @@ export function ReportProblemForm({ onSubmit }: ReportProblemFormProps) {
           </div>
         </div>
 
-        {/* Urgency Level Slider */}
         <div className="space-y-3 p-4 bg-rose-50 rounded-lg border border-rose-100">
           <div className="flex justify-between items-center">
           <Label htmlFor="urgency" className="text-rose-900 font-semibold">
@@ -313,7 +305,6 @@ export function ReportProblemForm({ onSubmit }: ReportProblemFormProps) {
           </div>
         </div>
 
-        {/* Tags Selection */}
         <div className="space-y-2">
           <Label>{t("report.tags", "Tags")}</Label>
           <div className="flex flex-wrap gap-2">
@@ -337,7 +328,6 @@ export function ReportProblemForm({ onSubmit }: ReportProblemFormProps) {
           </div>
         </div>
 
-        {/* Кнопка отправки */}
         <Button
           type="submit"
           className="w-full bg-rose-600 hover:bg-rose-700 text-white shadow-lg shadow-rose-200 mt-4"

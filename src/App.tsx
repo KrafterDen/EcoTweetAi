@@ -1,6 +1,10 @@
+import { useState, useRef, useEffect, useMemo } from "react";
+import { 
+  ArrowLeft, Globe, Leaf, MapPin, AlertTriangle, Lightbulb, 
+  Trophy, Activity, ArrowRight, User
+} from "lucide-react";
+
 import { EcoProblemCard } from "./components/EcoProblemCard";
-// StatCard больше не нужен для новой сложной верстки, мы сделаем кастомные карточки
-// import { StatCard } from "./components/StatCard"; 
 import { Header } from "./components/Header";
 import { HeroSection } from "./components/HeroSection";
 import { RegistrationForm } from "./components/RegistrationForm";
@@ -8,86 +12,58 @@ import { ProblemSolutionPage } from "./components/ProblemSolutionPage";
 import { RegionSelector } from "./components/RegionSelector";
 import { TutorialTooltip } from "./components/TutorialTooltip";
 import { ReportProblemForm } from "./components/ReportProblemForm";
-import { Button } from "./components/ui/button";
-import { 
-  ArrowLeft, 
-  Globe, 
-  Leaf, 
-  MapPin, 
-  AlertTriangle, 
-  Lightbulb, 
-  Trophy, 
-  Activity, 
-  ArrowRight,
-  User
-} from "lucide-react";
-import { useState, useRef, useEffect, useMemo } from "react";
-import ecoProblemsData from "./data/EcoProblems.json";
 import { ActivistResources } from "./components/ActivistResources";
-import { EcoProblem, EcoProblemRecord, RegionValue } from "./types";
+import { Button } from "./components/ui/button";
+
+import { AdminPanel } from "./components/AdminPanel"; 
+import { AdminLoginModal } from "./components/AdminLoginModal"; 
+import { Dialog, DialogContent } from "./components/ui/dialog"; 
+import { AdminDemoOverlay } from "./components/AdminDemoOverlay";
+
 import { regionToContinentMap } from "./data/regions";
 import { deriveHighlights } from "./utils/highlights";
-import { getCustomProblems, addCustomProblem } from "./utils/customProblemsStorage";
-import type { ReportProblemPayload } from "./types";
-import { fetchProblems, createProblem, uploadAttachment } from "./utils/api";
+import { fetchProblems, fetchSolutions, createProblem, uploadAttachment } from "./utils/api";
 import { useI18n } from "./i18n";
 
-const formatPopulation = (value: number) => {
-  if (value >= 1_000_000_000) {
-    return `${(value / 1_000_000_000).toFixed(1)}B people`;
-  }
-  if (value >= 1_000_000) {
-    return `${(value / 1_000_000).toFixed(1)}M people`;
-  }
-  return `${value.toLocaleString()} people`;
-};
+import type { ReportProblemPayload, EcoProblem, RegionValue, SolutionRecord } from "./types";
 
-const allEcoProblems: EcoProblem[] = (ecoProblemsData as EcoProblemRecord[]).map(
-  (problem) => ({
-    id: problem.id,
-    continent: problem.continent,
-    country: problem.country,
-    city: problem.city,
-    title: problem.title,
-    description: problem.description,
-    imageUrl: problem.image_url,
-    urgencyLevel: problem.urgency_percent,
-    impactedPopulation: formatPopulation(problem.affected_population),
-    timeframe: problem.critical_timeframe,
-    tags: problem.tags,
-    lastUpdated: problem.last_updated,
-  })
-);
+const formatPopulation = (value: number) => {
+  if (value >= 1_000_000_000) return `${(value / 1_000_000_000).toFixed(1)} млрд людей`;
+  if (value >= 1_000_000) return `${(value / 1_000_000).toFixed(1)} млн людей`;
+  return `${value.toLocaleString()} людей`;
+};
 
 type AppView = "home" | "resources" | "involved";
 
 const getInitialView = (): AppView => {
   if (typeof window !== "undefined") {
-    if (window.location.hash === "#resources") {
-      return "resources";
-    }
-    if (window.location.hash === "#involved") {
-      return "involved";
-    }
+    if (window.location.hash === "#resources") return "resources";
+    if (window.location.hash === "#involved") return "involved";
   }
   return "home";
 };
 
 export default function App() {
   const { t } = useI18n();
+
   const [selectedProblem, setSelectedProblem] = useState<EcoProblem | null>(null);
   const [problems, setProblems] = useState<EcoProblem[]>([]);
-  
-  // Состояние для сложного селектора
-  const [selectedRegion, setSelectedRegion] = useState<RegionValue>("GLOBAL");
-  const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
-  const [selectedCity, setSelectedCity] = useState<string | null>(null);
+  const [solutions, setSolutions] = useState<SolutionRecord[]>([]);
+
+  const [selectedRegion, setSelectedRegion] = useState<RegionValue>("EUROPE");
+  const [selectedCountry, setSelectedCountry] = useState<string | null>("Ukraine");
+  const [selectedCity, setSelectedCity] = useState<string | null>("Kyiv");
 
   const [tutorialStep, setTutorialStep] = useState<number>(0);
   const [highlightTakeAction, setHighlightTakeAction] = useState(false);
   const [view, setView] = useState<AppView>(() => getInitialView());
   const [reportProblemOpen, setReportProblemOpen] = useState(false);
-  const highlights = deriveHighlights(problems.length ? problems : allEcoProblems);
+
+  const [isAdminLoginOpen, setIsAdminLoginOpen] = useState(false);
+  const [showAdminPanel, setShowAdminPanel] = useState(false);
+  const [showAdminDemo, setShowAdminDemo] = useState(false);
+
+  const highlights = deriveHighlights(problems, solutions);
   
   const regionSelectorRef = useRef<HTMLDivElement>(null);
   const problemsGridRef = useRef<HTMLDivElement>(null);
@@ -96,91 +72,57 @@ export default function App() {
     let active = true;
     const load = async () => {
       try {
-        const apiProblems = await fetchProblems();
+        const [apiProblems, apiSolutions] = await Promise.all([
+          fetchProblems(),
+          fetchSolutions()
+        ]);
         if (!active) return;
         setProblems(apiProblems);
-      } catch {
-        if (!active) return;
-        setProblems([...allEcoProblems, ...getCustomProblems()]);
+        setSolutions(apiSolutions);
+      } catch (error) {
+        console.error("Failed to fetch data:", error);
       }
     };
     load();
-    return () => {
-      active = false;
-    };
+    return () => { active = false; };
   }, []);
 
   useEffect(() => {
     if (tutorialStep === 1 && regionSelectorRef.current) {
       const elementTop = regionSelectorRef.current.getBoundingClientRect().top + window.scrollY;
-      window.scrollTo({
-        top: elementTop - 150,
-        behavior: "smooth"
-      });
+      window.scrollTo({ top: elementTop - 150, behavior: "smooth" });
     } else if (tutorialStep === 2 && problemsGridRef.current) {
       const elementTop = problemsGridRef.current.getBoundingClientRect().top + window.scrollY;
-      window.scrollTo({
-        top: elementTop - 100,
-        behavior: "smooth"
-      });
+      window.scrollTo({ top: elementTop - 100, behavior: "smooth" });
     }
   }, [tutorialStep]);
 
-  const handleSavePlanetClick = () => {
-    setHighlightTakeAction(true);
-    setTimeout(() => setHighlightTakeAction(false), 3000);
-  };
-
-  const handleTakeActionClick = () => {
-    setTutorialStep(1);
-  };
-
   useEffect(() => {
-    if (typeof window === "undefined") {
-      return;
-    }
-    const handleHashChange = () => {
-      setView(getInitialView());
-    };
+    if (typeof window === "undefined") return;
+    const handleHashChange = () => setView(getInitialView());
     window.addEventListener("hashchange", handleHashChange);
-    return () => {
-      window.removeEventListener("hashchange", handleHashChange);
-    };
+    return () => window.removeEventListener("hashchange", handleHashChange);
   }, []);
 
   const navigateTo = (next: AppView) => {
     setView(next);
     if (typeof window !== "undefined") {
-      if (next === "resources") {
-        window.location.hash = "#resources";
-      } else if (next === "involved") {
-        window.location.hash = "#involved";
-      } else {
-        window.history.replaceState(
-          null,
-          "",
-          window.location.pathname + window.location.search
-        );
-      }
+      if (next === "resources") window.location.hash = "#resources";
+      else if (next === "involved") window.location.hash = "#involved";
+      else window.history.replaceState(null, "", window.location.pathname + window.location.search);
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
 
-  // Хендлеры для обновления состояния селектора
   const handleRegionChange = (value: RegionValue) => {
     setSelectedRegion(value);
-    // При смене региона сбрасываем страну и город
     setSelectedCountry(null);
     setSelectedCity(null);
-    
-    if (tutorialStep === 1) {
-      setTutorialStep(2);
-    }
+    if (tutorialStep === 1) setTutorialStep(2);
   };
 
   const handleCountryChange = (value: string) => {
     setSelectedCountry(value);
-    // При смене страны сбрасываем город
     setSelectedCity(null);
   };
 
@@ -188,49 +130,21 @@ export default function App() {
     setSelectedCity(value);
   };
 
-  const timeframeLabels: Record<string, string> = {
-    next_5_years: "Next 5 years",
-    next_10_years: "Next 10 years",
-    next_15_years: "Next 15 years",
-    next_20_years: "Next 20 years",
-  };
-
   const handleProblemSubmit = async (payload: ReportProblemPayload) => {
-    const affected = payload.affectedPopulation ?? null;
-    const continent =
-      regionToContinentMap[payload.region] ?? "Global";
     try {
       let imageUrl = payload.imageUrl;
       if (!imageUrl && payload.imageFile) {
         try {
           imageUrl = await uploadAttachment(payload.imageFile);
-        } catch {
-          imageUrl = undefined;
+        } catch (e) {
+          console.error("Image upload failed:", e);
         }
       }
-
       const created = await createProblem({ ...payload, imageUrl });
-      setProblems((prev) => [created, ...prev.filter((p) => p.id !== created.id)]);
-    } catch {
-      const newProblem: EcoProblem = {
-        id: `custom-${Date.now()}`,
-        continent: continent || "Global",
-        country: payload.country ?? null,
-        city: payload.city ?? null,
-        title: payload.title,
-        description: payload.description,
-        imageUrl:
-          payload.imageUrl ||
-          "https://images.pexels.com/photos/2409022/pexels-photo-2409022.jpeg",
-        urgencyLevel: payload.urgency,
-        impactedPopulation: affected ? formatPopulation(affected) : "Unknown",
-        timeframe: timeframeLabels[payload.timeframe] || payload.timeframe,
-        tags: payload.tags,
-        lastUpdated: new Date().toISOString(),
-      };
-
-      const updatedCustom = addCustomProblem(newProblem);
-      setProblems([...allEcoProblems, ...updatedCustom]);
+      setProblems((prev) => [created, ...prev]);
+    } catch (error) {
+      console.error("Failed to create problem:", error);
+      alert("Не вдалося зберегти проблему.");
     } finally {
       setReportProblemOpen(false);
     }
@@ -240,42 +154,35 @@ export default function App() {
     const continent = regionToContinentMap[selectedRegion];
     let currentProblems = !continent
       ? problems
-      : problems.filter((problem) => problem.continent === continent);
+      : problems.filter((p) => p.continent === continent);
 
-    if (selectedCountry && currentProblems.some((problem) => problem.country)) {
-      currentProblems = currentProblems.filter((problem) => problem.country === selectedCountry);
+    if (selectedCountry) {
+      currentProblems = currentProblems.filter((p) => p.country === selectedCountry);
     }
-
-    if (selectedCity && currentProblems.some((problem) => problem.city)) {
-      currentProblems = currentProblems.filter((problem) => problem.city === selectedCity);
+    if (selectedCity) {
+      currentProblems = currentProblems.filter((p) => p.city === selectedCity);
     }
-
     return currentProblems;
-  }, [selectedRegion, selectedCountry, selectedCity, problems]);
+  }, [problems, selectedRegion, selectedCountry, selectedCity]);
+
+  const handleSavePlanetClick = () => {
+    setHighlightTakeAction(true);
+    setTimeout(() => setHighlightTakeAction(false), 3000);
+  };
 
   const closeTutorial = () => {
     setTutorialStep(0);
   };
 
-  const reportProblemOverlay = reportProblemOpen ? (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4"
-      onClick={() => setReportProblemOpen(false)}
-    >
-          <div
-            className="max-h-[90vh] overflow-y-auto"
-            onClick={(event) => event.stopPropagation()}
-          >
-        <ReportProblemForm onSubmit={handleProblemSubmit} />
-      </div>
-    </div>
-  ) : null;
+  if (showAdminPanel) {
+    return <AdminPanel onClose={() => setShowAdminPanel(false)} />;
+  }
 
   if (selectedProblem) {
     return (
       <ProblemSolutionPage
-        {...selectedProblem}
-        onBack={() => setSelectedProblem(null)}
+        problem={selectedProblem}
+        onClose={() => setSelectedProblem(null)}
       />
     );
   }
@@ -285,36 +192,13 @@ export default function App() {
       <div className="min-h-screen bg-gradient-to-b from-emerald-50 to-white">
         <Header
           onNavigateToResources={() => navigateTo("resources")}
+          onNavigateToInvolved={() => navigateTo("involved")}
           onReportProblem={() => setReportProblemOpen(true)}
+          onOpenAdminLogin={() => setIsAdminLoginOpen(true)}
         />
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          {/* Resource View Content */}
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-10">
-            <div className="space-y-3">
-              <p className="text-sm uppercase tracking-[0.3em] text-emerald-600">
-                Movement Leaders
-              </p>
-              <h1 className="text-3xl md:text-4xl font-semibold text-emerald-950">
-                Global Environmental Activists
-              </h1>
-              <p className="text-gray-600 max-w-2xl">
-                Discover the scientists, organizers, diplomats, and storytellers
-                leading the fight for climate justice. Follow them on X to keep
-                their work amplified in your network.
-              </p>
-            </div>
-            <Button
-              variant="outline"
-              className="w-full sm:w-auto"
-              onClick={() => navigateTo("home")}
-            >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to main page
-            </Button>
-          </div>
-          <ActivistResources />
+           <ActivistResources onBack={() => navigateTo("home")} />
         </main>
-        {reportProblemOverlay}
       </div>
     );
   }
@@ -326,35 +210,54 @@ export default function App() {
           onNavigateToResources={() => navigateTo("resources")}
           onNavigateToInvolved={() => navigateTo("involved")}
           onReportProblem={() => setReportProblemOpen(true)}
+          onOpenAdminLogin={() => setIsAdminLoginOpen(true)}
         />
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 flex justify-center items-center">
           <RegistrationForm />
         </main>
-        {reportProblemOverlay}
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-emerald-50 to-white">
-      {/* Navigation Header */}
+    <div className="min-h-screen bg-gradient-to-b from-emerald-50 to-white text-gray-900 font-sans selection:bg-emerald-200">
+      
+
       <Header
         onNavigateToResources={() => navigateTo("resources")}
         onNavigateToInvolved={() => navigateTo("involved")}
         onReportProblem={() => setReportProblemOpen(true)}
+        onOpenAdminLogin={() => setIsAdminLoginOpen(true)}
       />
 
-      <HeroSection
-        highlightTakeAction={highlightTakeAction}
+      <AdminLoginModal 
+        isOpen={isAdminLoginOpen}
+        onClose={() => setIsAdminLoginOpen(false)}
+        onLoginSuccess={() => setShowAdminPanel(true)}
+      />
+      
+      {showAdminDemo && (
+        <AdminDemoOverlay onClose={() => setShowAdminDemo(false)} />
+      )}
+
+      <Dialog open={reportProblemOpen} onOpenChange={setReportProblemOpen}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <ReportProblemForm
+            onSubmit={handleProblemSubmit}
+          />
+        </DialogContent>
+      </Dialog>
+
+      <HeroSection 
+        onTakeActionClick={() => setTutorialStep(1)} 
+        highlight={highlightTakeAction} 
         onSavePlanetClick={handleSavePlanetClick}
-        onTakeActionClick={handleTakeActionClick}
       />
 
-      {/* NEW STATS SECTION (Custom Layout) */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-12 relative z-10">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           
-          {/* Card 1: Problem of the Week */}
+
           <div className="bg-white p-5 rounded-xl shadow-sm border border-emerald-100/60 hover:shadow-md transition-all flex flex-col justify-between h-full">
             <div>
               <div className="flex items-center justify-between mb-2">
@@ -383,7 +286,6 @@ export default function App() {
             </div>
           </div>
 
-          {/* Card 2: Solution of the Week */}
           <div className="bg-white p-5 rounded-xl shadow-sm border border-emerald-100/60 hover:shadow-md transition-all flex flex-col justify-between h-full">
             <div>
               <div className="flex items-center justify-between mb-2">
@@ -410,7 +312,6 @@ export default function App() {
             </div>
           </div>
 
-          {/* Card 3: Eco-Hero of the Week */}
           <div className="bg-white p-5 rounded-xl shadow-sm border border-emerald-100/60 hover:shadow-md transition-all flex flex-col justify-between h-full bg-gradient-to-br from-white to-purple-50/30">
             <div>
               <div className="flex items-center justify-between mb-3">
@@ -445,48 +346,48 @@ export default function App() {
             </div>
           </div>
 
-          {/* Card 4: Community Impact */}
-          <div className="bg-emerald-600 p-5 rounded-xl shadow-sm border border-emerald-600 hover:shadow-md transition-all flex flex-col justify-between h-full text-white">
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <h3 className="font-semibold text-emerald-50 leading-tight">
-                  {t("highlights.impact", "Community Impact")}
-                </h3>
-                <Activity className="w-4 h-4 text-emerald-200" />
+          {highlights.impact && (
+            <div className="bg-emerald-600 p-5 rounded-xl shadow-sm border border-emerald-600 hover:shadow-md transition-all flex flex-col justify-between h-full text-white">
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="font-semibold text-emerald-50 leading-tight">
+                    {t("highlights.impact", "Community Impact")}
+                  </h3>
+                  <Activity className="w-4 h-4 text-emerald-200" />
+                </div>
+                <div className="space-y-1.5 mb-3">
+                   <div className="flex items-center justify-between text-sm">
+                      <span className="text-emerald-100">{t("highlights.newProblems", "New Problems")}</span>
+                      <span className="font-bold">+{highlights.impact.problems}</span>
+                   </div>
+                   <div className="flex items-center justify-between text-sm">
+                      <span className="text-emerald-100">{t("highlights.newSolutions", "New Solutions")}</span>
+                      <span className="font-bold">+{highlights.impact.solutions}</span>
+                   </div>
+                   <div className="flex items-center justify-between text-sm">
+                      <span className="text-emerald-100">{t("highlights.votesCast", "Votes Cast")}</span>
+                      <span className="font-bold">{highlights.impact.votes}</span>
+                   </div>
+                </div>
               </div>
-              <div className="space-y-1.5 mb-3">
-                 <div className="flex items-center justify-between text-sm">
-                    <span className="text-emerald-100">{t("highlights.newProblems", "New Problems")}</span>
-                    <span className="font-bold">+{highlights.impact.problems}</span>
-                 </div>
-                 <div className="flex items-center justify-between text-sm">
-                    <span className="text-emerald-100">{t("highlights.newSolutions", "New Solutions")}</span>
-                    <span className="font-bold">+{highlights.impact.solutions}</span>
-                 </div>
-                 <div className="flex items-center justify-between text-sm">
-                    <span className="text-emerald-100">{t("highlights.votesCast", "Votes Cast")}</span>
-                    <span className="font-bold">{highlights.impact.votes}</span>
-                 </div>
-              </div>
+              <button 
+                  onClick={() => navigateTo("involved")}
+                  className="w-full py-2 bg-white/10 hover:bg-white/20 rounded-lg text-xs font-medium text-white transition-colors flex items-center justify-center"
+              >
+                Join the action
+                <ArrowRight className="w-3 h-3 ml-1.5" />
+              </button>
             </div>
-            <button 
-                onClick={() => navigateTo("involved")}
-                className="w-full py-2 bg-white/10 hover:bg-white/20 rounded-lg text-xs font-medium text-white transition-colors flex items-center justify-center"
-            >
-              Join the action
-              <ArrowRight className="w-3 h-3 ml-1.5" />
-            </button>
-          </div>
+          )}
 
         </div>
       </section>
 
-      {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        {/* Introduction */}
+        
+
         <div className="text-center mb-12">
           
-          {/* ОБНОВЛЕННЫЙ КОМПОНЕНТ СЕЛЕКТОРА */}
           <RegionSelector
             selectedRegion={selectedRegion}
             selectedCountry={selectedCountry}
@@ -497,7 +398,8 @@ export default function App() {
             ref={regionSelectorRef}
           />
           
-          <h2 className="mb-4 mt-6">
+
+          <h2 className="mb-4 mt-6 text-2xl font-bold text-emerald-950">
             {t("section.title", "Priority Environmental Issues")}
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
@@ -505,25 +407,70 @@ export default function App() {
           </p>
         </div>
 
-        {/* Problems Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16" ref={problemsGridRef}>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16 relative" ref={problemsGridRef}>
+
           {filteredProblems.length === 0 ? (
+
             <div className="col-span-full text-center bg-white border border-dashed border-emerald-200 rounded-2xl p-10 shadow-sm">
               <Globe className="w-12 h-12 mx-auto text-emerald-500 mb-4" />
               <h3 className="text-lg font-semibold text-emerald-900">{t("empty.title", "No data for this localization yet")}</h3>
               <p className="text-gray-600 mt-2">{t("empty.subtitle", "Try selecting a different region to explore more ecological challenges.")}</p>
+              <Button 
+                  variant="link" 
+                  className="text-emerald-600 mt-2"
+                  onClick={() => setReportProblemOpen(true)}
+                >
+                  Be the first to report one
+              </Button>
             </div>
           ) : (
-            filteredProblems.map((problem) => (
-            <EcoProblemCard key={problem.id} {...problem} onTakeAction={() => setSelectedProblem(problem)} />
-            ))
+            filteredProblems.map((problem: any) => {
+
+              const rawPop = 
+                problem.impactedPopulation || 
+                problem.affectedPopulation || 
+                problem.impacted_population || 
+                problem.affected_population || 
+                problem.population;
+
+              let displayPop = "Невідомо";
+              
+              if (rawPop) {
+
+                if (typeof rawPop === 'string' && isNaN(Number(rawPop))) {
+                  displayPop = rawPop;
+                } else {
+
+                  displayPop = formatPopulation(Number(rawPop));
+                }
+              }
+
+              let tags = [];
+              try {
+                tags = Array.isArray(problem.tags) 
+                  ? problem.tags 
+                  : (problem.tagsJson ? JSON.parse(problem.tagsJson) : []);
+              } catch (e) {
+                console.error("Error parsing tags", e);
+              }
+
+              return (
+                <div key={problem.id} className="h-full">
+                  <EcoProblemCard 
+                    {...problem} 
+                    impactedPopulation={displayPop}
+                    tags={tags}
+                    onTakeAction={() => setSelectedProblem(problem)} 
+                  />
+                </div>
+              );
+            })
           )}
         </div>
 
-        {/* Call to Action */}
         <div className="bg-gradient-to-r from-emerald-600 to-teal-600 rounded-2xl p-8 md:p-12 text-white text-center">
           <Leaf className="w-12 h-12 mx-auto mb-4" />
-          <h2 className="text-white mb-4">
+          <h2 className="text-white mb-4 text-3xl font-bold">
             {t("cta.title", "Every Action Counts")}
           </h2>
           <p className="text-xl text-emerald-50 mb-8 max-w-2xl mx-auto">
@@ -544,14 +491,26 @@ export default function App() {
         </div>
       </main>
 
-      {/* Tutorial Tooltip */}
       {tutorialStep > 0 && (
         <TutorialTooltip
           step={tutorialStep}
           onClose={closeTutorial}
         />
       )}
-      {reportProblemOverlay}
+
+      <footer className="bg-emerald-900 text-white py-12 mt-auto">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center">
+          <div className="mb-4 md:mb-0">
+            <h3 className="text-xl font-bold flex items-center gap-2">
+              <Globe className="w-5 h-5" /> EcoTweetAI
+            </h3>
+            <p className="text-emerald-200 text-sm mt-1">Empowering communities through data.</p>
+          </div>  
+          <div className="text-emerald-200 text-sm">
+            © 2026 EcoTweetAI. All rights reserved.
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }

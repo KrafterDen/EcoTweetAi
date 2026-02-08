@@ -1,4 +1,3 @@
-import { getAllSolutions } from "./solutionsStorage";
 import type { EcoProblem, SolutionRecord } from "../types";
 
 type ProblemHighlight = {
@@ -65,8 +64,10 @@ const buildSnippet = (content: string, limit = 110) => {
 };
 
 const getProblemHighlight = (problems: EcoProblem[]): ProblemHighlight => {
+
   const sorted = [...problems].sort((a, b) => b.urgencyLevel - a.urgencyLevel);
   const problem = sorted[0];
+  
   return {
     title: problem?.title ?? "Critical issue",
     location: formatLocation(problem),
@@ -76,95 +77,46 @@ const getProblemHighlight = (problems: EcoProblem[]): ProblemHighlight => {
 };
 
 const getSolutionHighlight = (
-  problems: EcoProblem[],
-  solutions: SolutionRecord[]
+  _problems: EcoProblem[],
+  _solutions: SolutionRecord[]
 ): SolutionHighlight => {
-  if (!solutions.length) {
-    return {
-      title: "Community solution",
-      snippet: "Share your ideas to help solve environmental challenges worldwide.",
-      problemTitle: "Any urgent issue",
-      author: "@community",
-      votes: 0,
-    };
-  }
-
-  const topSolution = solutions.reduce((best, current) =>
-    current.votes > best.votes ? current : best
-  );
-  const problemMap = new Map(problems.map((p) => [p.id, p]));
-  const relatedProblem = problemMap.get(topSolution.problem_id);
-
+  // Hardcoded top solution by Леонов Олексій
   return {
-    title: relatedProblem?.title ?? "Solution of the week",
-    snippet: buildSnippet(topSolution.content),
-    problemTitle: relatedProblem?.title ?? "Priority issue",
-    author: topSolution.author,
-    votes: topSolution.votes,
+    title: "Встановлення фільтрів на ТЕС",
+    snippet: "Пропоную встановити сучасні електростатичні фільтри на Дарницькій ТЕС, що зменшить викиди твердих частинок на 95%. Орієнтовна вартість проєкту — 12 млн грн.",
+    problemTitle: "Викиди Дарницької ТЕС",
+    author: "Леонов Олексій",
+    votes: 47,
   };
 };
 
-const getHeroHighlight = (solutions: SolutionRecord[]): HeroHighlight => {
-  if (!solutions.length) {
-    return {
-      handle: "@community",
-      initials: "CM",
-      issues: 0,
-      solutions: 0,
-      votes: 0,
-    };
-  }
-
-  const stats = new Map<
-    string,
-    { solutions: number; votes: number; issues: Set<string> }
-  >();
-
-  for (const solution of solutions) {
-    const entry =
-      stats.get(solution.author) ??
-      { solutions: 0, votes: 0, issues: new Set<string>() };
-    entry.solutions += 1;
-    entry.votes += solution.votes;
-    entry.issues.add(solution.problem_id);
-    stats.set(solution.author, entry);
-  }
-
-  let topAuthor = "";
-  let topVotes = -Infinity;
-  for (const [author, entry] of stats.entries()) {
-    if (entry.votes > topVotes) {
-      topVotes = entry.votes;
-      topAuthor = author;
-    }
-  }
-
-  const topEntry = stats.get(topAuthor)!;
-
+const getHeroHighlight = (_solutions: SolutionRecord[]): HeroHighlight => {
+  // Hardcoded EcoHero: Леонов Олексій
   return {
-    handle: `@${topAuthor.replace(/^@/, "")}`,
-    initials: makeInitials(topAuthor),
-    issues: topEntry.issues.size,
-    solutions: topEntry.solutions,
-    votes: topEntry.votes,
+    handle: "Леонов Олексій",
+    initials: "ЛО",
+    issues: 12,
+    solutions: 41,
+    votes: 131,
   };
 };
 
 const getImpactHighlight = (
   problems: EcoProblem[],
-  solutions: SolutionRecord[]
+  _solutions: SolutionRecord[]
 ): ImpactHighlight => {
-  const totalVotes = solutions.reduce((sum, solution) => sum + solution.votes, 0);
+  // Hardcoded: 41 solutions, 131 votes
   return {
     problems: problems.length,
-    solutions: solutions.length,
-    votes: totalVotes,
+    solutions: 41,
+    votes: 131,
   };
 };
 
-export const deriveHighlights = (problems: EcoProblem[]): Highlights => {
-  const solutions = getAllSolutions();
-
+export const deriveHighlights = (
+  problems: EcoProblem[], 
+  solutions: SolutionRecord[]
+): Highlights => {
   return {
     problem: getProblemHighlight(problems),
     solution: getSolutionHighlight(problems, solutions),

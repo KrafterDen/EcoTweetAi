@@ -61,7 +61,7 @@ const translations: Translations = {
     "report.problemTitle": "Назва проблеми",
     "report.description": "Опис",
     "report.image": "Зображення (URL або файл)",
-    "report.imageHint": "Вставте посилання на зображення. Файли буде завантажено на сервер і використано як URL (без base64).",
+    "report.imageHint": "Вставте посилання на зображення. Файли буде завантажено на сервер і використано як URL.",
     "report.location": "Локація",
     "report.regionPh": "Оберіть регіон",
     "report.countryPh": "Оберіть країну",
