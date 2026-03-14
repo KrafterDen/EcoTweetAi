@@ -1,6 +1,5 @@
 import type { EcoProblem, ReportProblemPayload, SolutionRecord } from "../types";
 
-const API_BASE = import.meta.env.VITE_API_BASE || "";
 const API_TOKEN = import.meta.env.VITE_API_TOKEN || "dev-token";
 
 const formatPopulation = (value?: number | null) => {
@@ -27,7 +26,7 @@ const mapProblem = (payload: any): EcoProblem => ({
 });
 
 export const fetchProblems = async (): Promise<EcoProblem[]> => {
-  const response = await fetch(`${API_BASE}/api/problems`);
+  const response = await fetch(`/api/problems`);
   if (!response.ok) {
     throw new Error(`API error ${response.status}`);
   }
@@ -36,7 +35,7 @@ export const fetchProblems = async (): Promise<EcoProblem[]> => {
 };
 
 export const createProblem = async (payload: ReportProblemPayload): Promise<EcoProblem> => {
-  const response = await fetch(`${API_BASE}/api/problems`, {
+  const response = await fetch(`/api/problems`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -54,7 +53,7 @@ export const createProblem = async (payload: ReportProblemPayload): Promise<EcoP
 export const uploadAttachment = async (file: File): Promise<string> => {
   const formData = new FormData();
   formData.append("file", file);
-  const response = await fetch(`${API_BASE}/api/upload`, {
+  const response = await fetch(`/api/upload`, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${API_TOKEN}`,
@@ -67,12 +66,12 @@ export const uploadAttachment = async (file: File): Promise<string> => {
   const data = await response.json();
   const url = data.url as string;
   if (url.startsWith("http")) return url;
-  return `${API_BASE}${url}`;
+  return `${url}`;
 };
 
 export const fetchSolutions = async (): Promise<SolutionRecord[]> => {
   try {
-    const response = await fetch(`${API_BASE}/api/solutions`);
+    const response = await fetch(`/api/solutions`);
     if (!response.ok) {
       console.warn(`API solutions error ${response.status}`);
       return [];
@@ -86,7 +85,7 @@ export const fetchSolutions = async (): Promise<SolutionRecord[]> => {
 };
 
 export const createSolution = async (payload: { problemId: string; content: string; author: string }): Promise<SolutionRecord> => {
-  const response = await fetch(`${API_BASE}/api/solutions`, {
+  const response = await fetch(`/api/solutions`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -102,7 +101,7 @@ export const createSolution = async (payload: { problemId: string; content: stri
 };
 
 export const voteSolution = async (solutionId: string, value: number): Promise<void> => {
-  const response = await fetch(`${API_BASE}/api/solutions/${solutionId}/vote`, {
+  const response = await fetch(`/api/solutions/${solutionId}/vote`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
