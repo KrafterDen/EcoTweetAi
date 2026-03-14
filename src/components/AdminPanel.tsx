@@ -17,7 +17,6 @@ export function AdminPanel({ onClose }: AdminPanelProps) {
 
   const [showAiDemo, setShowAiDemo] = useState(false);
 
-  const API_BASE = import.meta.env.VITE_API_BASE || "";
   const API_TOKEN = import.meta.env.VITE_API_TOKEN || "dev-token";
 
   const loadData = async () => {
@@ -40,7 +39,7 @@ export function AdminPanel({ onClose }: AdminPanelProps) {
   const handleDelete = async (id: number | string) => {
     if (!confirm("Видалити цей запис?")) return;
     try {
-        await fetch(`${API_BASE}/api/problems/${id}`, {
+        await fetch(`/api/problems/${id}`, {
             method: "DELETE",
             headers: { Authorization: `Bearer ${API_TOKEN}` }
         });
