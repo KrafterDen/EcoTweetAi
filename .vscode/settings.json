@@ -1,0 +1,11 @@
+{
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "driver": "SQLite",
+            "database": "${workspaceFolder:Genius}/prisma/dev.db",
+            "name": "EcoTweetAI"
+        }
+    ],
+    "sqltools.useNodeRuntime": true
+}
