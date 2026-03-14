@@ -31,7 +31,7 @@ const LiveFeed = () => {
   
   useEffect(() => {
     const names = ["Alex", "Maria", "EcoBot", "Helga", "Dmytro", "Yuki", "Carlos"];
-    const actions = ["reported problem in", "suggeted solution for problem in" ];
+    const actions = ["reported problem in", "suggested solution for problem in" ];
     const locations = ["Kyiv", "Donbas", "Amazon", "Sahara", "Venice", "California"];
 
     const addNotification = () => {
@@ -137,16 +137,19 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   useEffect(() => { 
     if (globeEl.current) {
         globeEl.current.pointOfView({ lat: 25, lng: 15, altitude: 1.8 });
-        globeEl.current.controls().autoRotate = true;
-        globeEl.current.controls().autoRotateSpeed = 0.5;
-        globeEl.current.controls().enableZoom = false;
+        // Проверка на наличие контролов перед использованием
+        const controls = globeEl.current.controls();
+        if (controls) {
+            controls.autoRotate = true;
+            controls.autoRotateSpeed = 0.5;
+            controls.enableZoom = false;
+        }
     }
   }, []);
 
   return (
     <div ref={containerRef} className="relative w-full h-[85vh] md:h-[90vh] bg-[#013220] overflow-hidden text-white font-sans">
       
-
       <div
         className="absolute top-0 bottom-0 left-1/2 right-[-6%] md:left-[45%] lg:left-[35%] z-0 opacity-0 animate-[fadeIn_2s_forwards]"
         style={{ animation: "fadeIn 2s forwards" }}
@@ -206,7 +209,6 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
         />
       </div>
       
-
       <div className="absolute top-0 left-0 w-full md:w-3/5 h-full bg-gradient-to-b md:bg-gradient-to-r from-[#013220] via-[#013220]/80 to-transparent z-0 pointer-events-none" />
 
       <div className="relative z-10 max-w-2xl mx-auto md:ml-[14%] md:mx-0 h-full flex flex-col justify-center px-4 md:px-0 text-center md:text-left pointer-events-none">

@@ -86,7 +86,7 @@ export function AdminDemoOverlay({ onClose, onProblemApproved }: AdminDemoOverla
     setIsAnalyzing(true);
     setProgress(0);
 
-    const duration = 1_000; 
+    const duration = 60_000; 
     const interval = 100;   
     const steps = duration / interval;
     let currentStep = 0;

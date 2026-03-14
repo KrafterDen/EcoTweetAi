@@ -1,0 +1,83 @@
+Problem {
+  continent:          "Europe"
+  country:            "Ukraine"
+  city:               "Kyiv"
+  title:              "Ai analysis: Дарницька ТЕС"
+  description:        "Єдина вугільна ТЕС у Києві, що генерує 300 тонн шкідливих відходів щодоби. Викидає в повітря важкі метали (ртуть, свинець, миш'як), а показники СО і NO2 у Дарницькому районі перевищують норми вдвічі. Відсутність сучасних фільтрів робить її вугільним монстром лівого берега."
+  urgencyPercent:     86
+  affectedPopulation: 340000
+  criticalTimeframe:  "-"
+  tagsJson:           "[\"AI\", \"Air Pollution\", \"Energy\"]"
+}
+
+Problem {
+  continent:          "Europe"
+  country:            "Ukraine"
+  city:               "Kyiv"
+  title:              "Ai analysis: Бортницька станція аерації"
+  description:        "Застаріла очисна система (60-80-ті роки), що не справляється з навантаженням. Існує високий ризик потрапляння каналізаційних стоків у ґрунтові води, що загрожує епідемією гепатиту. Жителі Харківського масиву постійно страждають від нестерпного смороду."
+  urgencyPercent:     87
+  affectedPopulation: 3000000
+  criticalTimeframe:  "-"
+  tagsJson:           "[\"AI\", \"Water Safety\", \"Infrastructure\"]"
+}
+
+Problem {
+  continent:          "Europe"
+  country:            "Ukraine"
+  city:               "Kyiv"
+  title:              "Ai analysis: Завод \"Енергія\""
+  description:        "Єдиний сміттєспалювальний завод, що знищує 500 тонн відходів на добу без належної фільтрації. У диму містяться важкі метали, хлор та аміак. Модернізація проводиться лише косметично, що призводить до хронічних захворювань у жителів через забруднене повітря."
+  urgencyPercent:     64
+  affectedPopulation: 340000
+  criticalTimeframe:  "-"
+  tagsJson:           "[\"AI\", \"Waste Incineration\", \"Health Risk\"]"
+}
+
+Problem {
+  continent:          "Europe"
+  country:            "Ukraine"
+  city:               "Kyiv"
+  title:              "Ai analysis: Забруднення автотранспортом"
+  description:        "Автомобілі є джерелом 70-85% викидів у повітря Києва. Чверть автопарку — старі моделі без еко-стандартів. Концентрація токсинів на дорогах перевищує норму в 3-4 рази. Відсутність зон низьких викидів та засилля дизельних авто погіршують ситуацію."
+  urgencyPercent:     58
+  affectedPopulation: 3000000
+  criticalTimeframe:  "-"
+  tagsJson:           "[\"AI\", \"Traffic Emission\", \"Urban Air\"]"
+}
+
+Problem {
+  continent:          "Europe"
+  country:            "Ukraine"
+  city:               "Kyiv"
+  title:              "Ai analysis: Полігон ТПВ №5"
+  description:        "Критичний стан звалища, де захоронюється 93% сміття. Утворюється токсичний фільтрат з важкими металами, який отруює ґрунтові води. Через відсутність сортування на полігоні гниють небезпечні відходи, отруюючи екосистему продуктами розкладання."
+  urgencyPercent:     91
+  affectedPopulation: 1800000
+  criticalTimeframe:  "-"
+  tagsJson:           "[\"AI\", \"Landfill\", \"Soil Contamination\"]"
+}
+
+Problem {
+  continent:          "Europe"
+  country:            "Ukraine"
+  city:               "Kyiv"
+  title:              "Ai analysis: Небезпечні медичні відходи"
+  description:        "Хаотична утилізація масок та костюмів. Недобросовісні фірми вивозять інфекційні відходи на стихійні звалища замість спалювання при 850°C. Це створює біологічну загрозу та сприяє поширенню патогенів у довкілля через відсутність контролю."
+  urgencyPercent:     53
+  affectedPopulation: 3000000
+  criticalTimeframe:  "-"
+  tagsJson:           "[\"AI\", \"Biohazard\", \"Pandemic Waste\"]"
+}
+
+Problem {
+  continent:          "Europe"
+  country:            "Ukraine"
+  city:               "Kyiv"
+  title:              "Ai analysis: Знищення урочища Горбачиха"
+  description:        "Незаконна забудова унікальних ландшафтних заказників. Урочище Горбачиха з червонокнижними рослинами планується під забудову висотками, що змінить русло Дніпра. Бетонування природних зон веде до остаточної втрати біорізноманіття."
+  urgencyPercent:     82
+  affectedPopulation: 360000
+  criticalTimeframe:  "-"
+  tagsJson:           "[\"AI\", \"Deforestation\", \"Ecosystem Loss\"]"
+}
